@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/new/rec">
         <file>Resources/icon.webp</file>
+        <file>Resources/close.png</file>
+        <file>Resources/save.png</file>
+        <file>Resources/savejpg.png</file>
+        <file>Resources/savePNG.png</file>
+        <file>Resources/warning.png</file>
     </qresource>
 </RCC>

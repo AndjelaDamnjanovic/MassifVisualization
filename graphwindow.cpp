@@ -41,13 +41,13 @@ GraphWindow::~GraphWindow()
 
 void GraphWindow::fillMap() {
     m_colors.insert("red", "#FF0000");
-    m_colors.insert("light blue", "#ADD8E6");
+    m_colors.insert("blue", "#ADD8E6");
     m_colors.insert("green", "#87ab69");
     m_colors.insert("yellow", "#FFFF00");
     m_colors.insert("orange", "#FFE5B4");
     m_colors.insert("purple", "#A020F0");
     m_colors.insert("brown", "#964B00");
-    m_colors.insert("dark blue", "#00008B");
+    m_colors.insert("cyan", "#00008B");
     m_colors.insert("pink", "#FFC0CB");
     m_colors.insert("off white", "#E8E4D6");
 
@@ -55,8 +55,8 @@ void GraphWindow::fillMap() {
 
 void GraphWindow::indexColors() {
     m_indices.insert("off white", 0);
-    m_indices.insert("dark blue", 8);
-    m_indices.insert("light blue", 1);
+    m_indices.insert("cyan", 8);
+    m_indices.insert("blue", 1);
     m_indices.insert("pink", 9);
     m_indices.insert("brown", 7);
     m_indices.insert("purple", 6);
@@ -105,12 +105,28 @@ void GraphWindow::on_openOne_triggered(){
 
 }
 
+void GraphWindow::on_actionSaveAsPng2_triggered() {
+    GraphWindow::SaveAsPic("png");
+}
+
+
+void GraphWindow::on_actionSaveAsJpg2_triggered() {
+    GraphWindow::SaveAsPic("jpg");
+}
+
+void GraphWindow::on_actionClose2_triggered()
+{
+    on_actionClose_triggered();
+}
+
+
 void GraphWindow::on_pbSave_clicked() {
 
-    QString res ="background-color: " +  ui->comboBackground->currentText();
-    ui->graphicsView->setStyleSheet(res);
     if (ui->comboGraph->currentText() == ui->comboBackground->currentText()) {
-        warning("Graph and background are same color!");
+        warning("Graph and background cannot be same color!");
+    }else{
+        QString res ="background-color: " +  ui->comboBackground->currentText();
+        ui->graphicsView->setStyleSheet(res);
     }
 }
 
@@ -159,4 +175,9 @@ void GraphWindow::on_actionSave_triggered(){
         std::ofstream saveFile;
         saveFile.open(m_path);
     }
+}
+
+void GraphWindow::on_actionSave2_triggered()
+{
+    emit on_actionSave_triggered();
 }

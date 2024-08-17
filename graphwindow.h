@@ -35,6 +35,10 @@ private slots:
     void on_actionClose_triggered();
     void on_actionSave_triggered();
     void on_openOne_triggered();
+    void on_actionSaveAsPng2_triggered();
+    void on_actionSaveAsJpg2_triggered();
+    void on_actionClose2_triggered();
+    void on_actionSave2_triggered();
     void on_pbSave_clicked();
 
 private:

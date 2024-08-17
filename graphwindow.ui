@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>493</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,7 +41,7 @@ background-color:  #171717;</string>
     <property name="geometry">
      <rect>
       <x>250</x>
-      <y>20</y>
+      <y>10</y>
       <width>750</width>
       <height>600</height>
      </rect>
@@ -86,8 +86,8 @@ background-color:  #171717;</string>
    <widget class="QTabWidget" name="tabLeft">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
+      <x>0</x>
+      <y>30</y>
       <width>241</width>
       <height>451</height>
      </rect>
@@ -144,7 +144,7 @@ background-color:  #171717;</string>
       </item>
       <item>
        <property name="text">
-        <string>light blue</string>
+        <string>blue</string>
        </property>
       </item>
       <item>
@@ -174,7 +174,7 @@ background-color:  #171717;</string>
       </item>
       <item>
        <property name="text">
-        <string>dark blue</string>
+        <string>cyan</string>
        </property>
       </item>
       <item>
@@ -204,7 +204,7 @@ background-color:  #171717;</string>
       </item>
       <item>
        <property name="text">
-        <string>light blue</string>
+        <string>blue</string>
        </property>
       </item>
       <item>
@@ -239,7 +239,7 @@ background-color:  #171717;</string>
       </item>
       <item>
        <property name="text">
-        <string>dark blue</string>
+        <string>cyan</string>
        </property>
       </item>
       <item>
@@ -287,24 +287,79 @@ background-color:  #171717;</string>
        <string>Save</string>
       </property>
      </widget>
-     <widget class="QLabel" name="lblMsg">
+     <widget class="QLabel" name="lblPlot">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>260</y>
+        <y>250</y>
         <width>221</width>
-        <height>51</height>
+        <height>17</height>
        </rect>
       </property>
       <property name="text">
-       <string/>
+       <string>Choose plot type:</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbGeneric">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>280</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>generic plot</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbScatter">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>310</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>scatter plot</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbStack">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>340</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>stack plot</string>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="drawTab">
      <attribute name="title">
-      <string>Draw</string>
+      <string>Pie charts</string>
      </attribute>
+     <widget class="QListWidget" name="lwPie">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>231</width>
+        <height>411</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background color: white</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -330,30 +385,62 @@ background-color:  #171717;</string>
      <addaction name="openExec"/>
     </widget>
     <addaction name="menuOpen"/>
-    <addaction name="actionClose"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSaveAsJpg"/>
-    <addaction name="actionSaveAsPng"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave2"/>
+    <addaction name="actionClose2"/>
+    <addaction name="actionSaveAsJpg2"/>
+    <addaction name="actionSaveAsPng2"/>
    </widget>
    <addaction name="menuFiles"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionSave"/>
+   <addaction name="actionClose"/>
+   <addaction name="actionSaveAsJpg"/>
+   <addaction name="actionSaveAsPng"/>
+  </widget>
   <action name="actionClose">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/close.png</normaloff>:/new/rec/Resources/close.png</iconset>
+   </property>
    <property name="text">
     <string>Close</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/save.png</normaloff>:/new/rec/Resources/save.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionSaveAsJpg">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/savejpg.png</normaloff>:/new/rec/Resources/savejpg.png</iconset>
+   </property>
    <property name="text">
     <string>Save as .jpg</string>
    </property>
   </action>
   <action name="actionSaveAsPng">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/savePNG.png</normaloff>:/new/rec/Resources/savePNG.png</iconset>
+   </property>
    <property name="text">
     <string>Save as .png</string>
    </property>
@@ -371,6 +458,42 @@ background-color:  #171717;</string>
   <action name="openExec">
    <property name="text">
     <string>Open executable</string>
+   </property>
+  </action>
+  <action name="actionSave2">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/save.png</normaloff>:/new/rec/Resources/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionClose2">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/close.png</normaloff>:/new/rec/Resources/close.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionSaveAsJpg2">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/savejpg.png</normaloff>:/new/rec/Resources/savejpg.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save as .jpg</string>
+   </property>
+  </action>
+  <action name="actionSaveAsPng2">
+   <property name="icon">
+    <iconset resource="Resources.qrc">
+     <normaloff>:/new/rec/Resources/savePNG.png</normaloff>:/new/rec/Resources/savePNG.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save as .png</string>
    </property>
   </action>
  </widget>
