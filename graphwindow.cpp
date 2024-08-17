@@ -28,6 +28,9 @@ GraphWindow::GraphWindow(QWidget *parent) :
     ui(new Ui::GraphWindow)
 {
     ui->setupUi(this);
+    fillMap();
+    indexColors();
+
 }
 
 GraphWindow::~GraphWindow()
@@ -39,29 +42,33 @@ GraphWindow::~GraphWindow()
 void GraphWindow::fillMap() {
     m_colors.insert("red", "#FF0000");
     m_colors.insert("light blue", "#ADD8E6");
-    m_colors.insert("green", "#006400");
+    m_colors.insert("green", "#87ab69");
     m_colors.insert("yellow", "#FFFF00");
     m_colors.insert("orange", "#FFE5B4");
     m_colors.insert("purple", "#A020F0");
     m_colors.insert("brown", "#964B00");
     m_colors.insert("dark blue", "#00008B");
     m_colors.insert("pink", "#FFC0CB");
+    m_colors.insert("off white", "#E8E4D6");
 
 }
 
 void GraphWindow::indexColors() {
-    m_indices.insert("dark blue", 7);
+    m_indices.insert("off white", 0);
+    m_indices.insert("dark blue", 8);
     m_indices.insert("light blue", 1);
-    m_indices.insert("pink", 8);
-    m_indices.insert("brown", 6);
-    m_indices.insert("purple", 5);
-    m_indices.insert("orange", 4);
-    m_indices.insert("yellow", 3);
-    m_indices.insert("green", 2);
-    m_indices.insert("red", 0);
+    m_indices.insert("pink", 9);
+    m_indices.insert("brown", 7);
+    m_indices.insert("purple", 6);
+    m_indices.insert("orange", 5);
+    m_indices.insert("yellow", 4);
+    m_indices.insert("green", 3);
+    m_indices.insert("red", 2);
 }
 
-
+void GraphWindow::warning(QString s) {
+    QMessageBox::warning(this, "Error", "<FONT COLOR='#171717'>"+s+"</FONT>");
+}
 
 void GraphWindow::SaveAsPic(const QString& m_ext){
     QString dir = QDir::homePath();
@@ -84,18 +91,27 @@ void GraphWindow::on_actionSaveAsJpg_triggered() {
     GraphWindow::SaveAsPic("jpeg");
 }
 
-void GraphWindow::on_actionOpen_triggered(){
+void GraphWindow::on_openOne_triggered(){
 
-    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/", "GRAPH files (*.graph)", nullptr, QFileDialog::DontUseNativeDialog);
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/", "", nullptr, QFileDialog::DontUseNativeDialog);
     std::string filename = file.toStdString();
     std::ifstream openFile;
-    //m_path=filename;
+    m_path=filename;
     openFile.open(filename);
 
     if (!openFile.fail()){
-
+        std::cout<<"Sve ok!"<<std::endl;
     }
 
+}
+
+void GraphWindow::on_pbSave_clicked() {
+
+    QString res ="background-color: " +  ui->comboBackground->currentText();
+    ui->graphicsView->setStyleSheet(res);
+    if (ui->comboGraph->currentText() == ui->comboBackground->currentText()) {
+        warning("Graph and background are same color!");
+    }
 }
 
 void GraphWindow::on_actionClose_triggered() {
@@ -124,5 +140,23 @@ void GraphWindow::on_actionClose_triggered() {
 }
 
 void GraphWindow::on_actionSave_triggered(){
-
+    if (m_path==""){
+        if (this->isLeftToRight()){
+            QMessageBox::information(this, tr("Error"), "The scene is empty");
+        }else{
+            QString file = QFileDialog::getSaveFileName(this, tr("Save File"), "/home/", "MASSIF files (*.massif)", nullptr, QFileDialog::DontUseNativeDialog);
+            if (!file.isEmpty()){
+                std::string filename = file.toStdString();
+                if (filename.substr(filename.size()- 7).compare(".massif")!=0){
+                    filename+=".massif";
+                }
+                m_path = filename;
+                std::ofstream saveFile;
+                saveFile.open(filename);
+            }
+        }
+    }else{
+        std::ofstream saveFile;
+        saveFile.open(m_path);
+    }
 }

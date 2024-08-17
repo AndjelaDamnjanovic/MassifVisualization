@@ -29,15 +29,17 @@ signals:
 
 
 private slots:
-    //void warning(QString s);
+    void warning(QString s);
     void on_actionSaveAsPng_triggered();
     void on_actionSaveAsJpg_triggered();
     void on_actionClose_triggered();
     void on_actionSave_triggered();
-    void on_actionOpen_triggered();
+    void on_openOne_triggered();
+    void on_pbSave_clicked();
 
 private:
     Ui::GraphWindow* ui;
+    std::string m_path = "";
 
 };
 #endif  // GRAPHWINDOW_H
