@@ -87,7 +87,3 @@ void Snapshot::setSnapshotType(const SnapshotType *snapshotType)
 {
     m_snapshotType = *snapshotType;
 }
-
-
-
-
