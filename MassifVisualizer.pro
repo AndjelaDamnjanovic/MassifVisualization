@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     graphwindow.cpp \
-    main.cpp
+    main.cpp \
+    snapshot.cpp
 
 HEADERS += \
-    graphwindow.h
+    graphwindow.h \
+    snapshot.h
 
 FORMS += \
     graphwindow.ui

@@ -1,5 +1,6 @@
 #include "graphwindow.h"
 #include "ui_graphwindow.h"
+
 #include <QMainWindow>
 
 #include <QJsonDocument>
