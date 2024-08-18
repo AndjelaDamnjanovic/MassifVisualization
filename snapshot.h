@@ -4,7 +4,7 @@
 #include <qglobal.h>
 
 enum class SnapshotType {
-    NORMAL,
+    EMPTY,
     DETAILED,
     PEAK
 };
@@ -16,7 +16,7 @@ public:
     ~Snapshot();
 
     uint getSnapshotIndex() const;
-    void setSnapshotIndex(const quint64 *);
+    void setSnapshotIndex(const uint *);
 
     quint64 getTime() const;
     void setTime(const quint64 *);
@@ -34,7 +34,7 @@ public:
     void setStacks(const quint64 *);
 
     SnapshotType getSnapshotType() const;
-    void setSnapshotType(const SnapshotType *);
+    void setSnapshotType(const SnapshotType);
 
 private:
     // defaultna vrednost za maksimalan broj snapshotova je 100, pa iako se ova vrednost moze menjati, ne ocekuje se neki

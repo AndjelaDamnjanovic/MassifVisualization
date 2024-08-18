@@ -7,7 +7,7 @@ Snapshot::Snapshot()
     , m_usefulHeapB(0)
     , m_extraHeapB(0)
     , m_stacksB(0)
-    , m_snapshotType(SnapshotType::NORMAL)
+    , m_snapshotType(SnapshotType::EMPTY)
 
 {
 
@@ -23,7 +23,7 @@ uint Snapshot::getSnapshotIndex() const
     return m_snapshotIndex;
 }
 
-void Snapshot::setSnapshotIndex(const quint64 *index)
+void Snapshot::setSnapshotIndex(const uint *index)
 {
     m_snapshotIndex = *index;
 }
@@ -83,7 +83,7 @@ SnapshotType Snapshot::getSnapshotType() const
     return m_snapshotType;
 }
 
-void Snapshot::setSnapshotType(const SnapshotType *snapshotType)
+void Snapshot::setSnapshotType(const SnapshotType snapshotType)
 {
-    m_snapshotType = *snapshotType;
+    m_snapshotType = snapshotType;
 }

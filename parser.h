@@ -54,6 +54,14 @@ private:
     void parseCommand(const std::string &);
     void parseTimeUnit(const std::string &);
 
+    void parseSnapshots(std::ifstream &);
+    void parseSnapshotNumber(const std::string &, uint*);
+    void parseSnapshotTime(const std::string &, quint64*);
+    void parseSnapshotUsefulB(const std::string &, quint64*);
+    void parseSnapshotExtraB(const std::string &, quint64*);
+    void parseSnapshotStacks(const std::string &, quint64*);
+    void parseSnapshotType(const std::string &, std::string *);
+
     std::string trim(const std::string &);
 
     // provera da li je prosledjeni fajl zaista dobar massif fajl

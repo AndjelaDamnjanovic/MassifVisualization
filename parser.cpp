@@ -64,6 +64,17 @@ void Parser::parseFile()
     else
         std::cout<<"NOT open"<<std::endl;
     parsePreamble(inputFile);
+
+    if (!m_isMassifFile) {
+        inputFile.close();
+        return;
+    }
+
+    parseSnapshots(inputFile);
+    if (!m_isMassifFile) {
+        inputFile.close();
+        return;
+    }
 }
 
 void Parser::parsePreamble(std::ifstream &file)
@@ -78,11 +89,26 @@ void Parser::parsePreamble(std::ifstream &file)
     std::getline(file, line);
     parseDescription(line);
 
+    if (!m_isMassifFile) {
+        file.close();
+        return;
+    }
+
     std::getline(file, line);
     parseCommand(line);
 
+    if (!m_isMassifFile) {
+        file.close();
+        return;
+    }
+
     std::getline(file, line);
     parseTimeUnit(line);
+
+    if (!m_isMassifFile) {
+        file.close();
+        return;
+    }
 }
 
 void Parser::parseDescription(const std::string &line)
@@ -171,7 +197,233 @@ void Parser::parseTimeUnit(const std::string &line)
         m_isMassifFile = false;
         return;
     }
-    std::cout<<m_timeUnit<<std::endl;
+    //std::cout<<m_timeUnit<<std::endl;
+}
+
+void Parser::parseSnapshots(std::ifstream &file)
+{
+    std::string line;
+    std::getline(file, line);
+
+    if(line.rfind("#-----------", 0) != 0){
+        m_isMassifFile = false;
+        return;
+    }
+
+    while (std::getline(file, line)){
+        Snapshot* snap = new Snapshot();
+        uint num;
+        parseSnapshotNumber(line, &num);
+
+        if(num != INT_MAX){
+            snap->setSnapshotIndex(&num);
+            std::cout<<snap->getSnapshotIndex()<<std::endl;
+        }else
+            break;
+
+        std::getline(file, line);
+
+        if(line.rfind("#-----------", 0) != 0){
+            m_isMassifFile = false;
+            break;
+        }
+
+        std::getline(file, line);
+        quint64 time;
+
+        parseSnapshotTime(line, &time);
+        if(time != INT_MAX){
+            snap->setTime(&time);
+            std::cout<<snap->getTime()<<std::endl;
+        }else
+            break;
+
+        std::getline(file, line);
+        quint64 usefulB;
+
+        parseSnapshotUsefulB(line, &usefulB);
+        if(usefulB != INT_MAX){
+            snap->setUsefulHeapB(&usefulB);
+            std::cout<<snap->getUsefulHeapB()<<std::endl;
+        }else
+            break;
+
+        std::getline(file, line);
+        quint64 extraB;
+
+        parseSnapshotExtraB(line, &extraB);
+        if(extraB != INT_MAX){
+            snap->setExtraHeapB(&extraB);
+            std::cout<<snap->getExtraHeapB()<<std::endl;
+        }else
+            break;
+
+        quint64 totalB = extraB + usefulB;
+        snap->setTotalHeapB(&totalB);
+        std::cout<<snap->getTotalHeapB()<<std::endl;
+
+        std::getline(file, line);
+        quint64 stacks;
+
+        parseSnapshotStacks(line, &stacks);
+        if(stacks != INT_MAX){
+            snap->setStacks(&stacks);
+            std::cout<<snap->getStacks()<<std::endl;
+        }else
+            break;
+
+        std::getline(file, line);
+        std::string snapshotType="";
+
+        parseSnapshotType(line, &snapshotType);
+        if(snapshotType == ""){
+            //snap->setSnapshotType(&snapshotType);
+            break;
+        }
+
+        if(snapshotType.compare("empty")){
+            std::cout<<"Empty"<<std::endl;
+            snap->setSnapshotType((SnapshotType::EMPTY));
+        }else if(snapshotType.compare("detailed")){
+            std::cout<<"Detailed"<<std::endl;
+            snap->setSnapshotType((SnapshotType::DETAILED));
+        }else if(snapshotType.compare("peak")){
+            std::cout<<"Peak"<<std::endl;
+            snap->setSnapshotType((SnapshotType::PEAK));
+        }else{
+            break;
+        }
+        break;
+    }
+}
+
+void Parser::parseSnapshotNumber(const std::string &line, uint *number){
+    if(line.rfind("snapshot=", 0) != 0){
+        m_isMassifFile = false;
+        return;
+    }
+
+    std::string delimiter = "=";
+    uint position = line.find(delimiter, 0);
+
+    if(position == std::string::npos){
+        m_isMassifFile = false;
+        *number = INT_MAX;
+        return;
+    }
+
+    std::string index = trim(line.substr(position, line.size() - position));
+    QString res = QString::fromStdString(index);
+    uint num = res.toUInt();
+    *number = num;
+    //std::cout<<snap->getSnapshotIndex()<<std::endl;
+}
+
+void Parser::parseSnapshotTime(const std::string &line, quint64 *time)
+{
+    if(line.rfind("time=", 0) != 0){
+        m_isMassifFile = false;
+        return;
+    }
+
+    std::string delimiter = "=";
+    uint position = line.find(delimiter, 0);
+
+    if(position == std::string::npos){
+        m_isMassifFile = false;
+        *time = INT_MAX;
+        return;
+    }
+
+    std::string timeVal = trim(line.substr(position, line.size() - position));
+    QString res = QString::fromStdString(timeVal);
+    quint64 num = res.toULongLong();
+    *time = num;
+}
+
+void Parser::parseSnapshotUsefulB(const std::string &line, quint64 *useful)
+{
+    if(line.rfind("mem_heap_B=", 0) != 0){
+        m_isMassifFile = false;
+        return;
+    }
+
+    std::string delimiter = "=";
+    uint position = line.find(delimiter, 0);
+
+    if(position == std::string::npos){
+        m_isMassifFile = false;
+        *useful = INT_MAX;
+        return;
+    }
+
+    std::string memB = trim(line.substr(position, line.size() - position));
+    QString res = QString::fromStdString(memB);
+    quint64 num = res.toULongLong();
+    *useful = num;
+}
+
+void Parser::parseSnapshotExtraB(const std::string &line, quint64 *extra)
+{
+    if(line.rfind("mem_heap_extra_B=", 0) != 0){
+        m_isMassifFile = false;
+        return;
+    }
+
+    std::string delimiter = "=";
+    uint position = line.find(delimiter, 0);
+
+    if(position == std::string::npos){
+        m_isMassifFile = false;
+        *extra = INT_MAX;
+        return;
+    }
+
+    std::string memB = trim(line.substr(position, line.size() - position));
+    QString res = QString::fromStdString(memB);
+    quint64 num = res.toULongLong();
+    *extra = num;
+}
+
+void Parser::parseSnapshotStacks(const std::string &line, quint64 *stacks)
+{
+    if(line.rfind("mem_stacks_B=", 0) != 0){
+        m_isMassifFile = false;
+        return;
+    }
+
+    std::string delimiter = "=";
+    uint position = line.find(delimiter, 0);
+
+    if(position == std::string::npos){
+        m_isMassifFile = false;
+        *stacks = INT_MAX;
+        return;
+    }
+
+    std::string memB = trim(line.substr(position, line.size() - position));
+    QString res = QString::fromStdString(memB);
+    quint64 num = res.toULongLong();
+    *stacks = num;
+}
+
+void Parser::parseSnapshotType(const std::string &line, std::string *type)
+{
+    if(line.rfind("heap_tree=", 0) != 0){
+        m_isMassifFile = false;
+        return;
+    }
+
+    std::string delimiter = "=";
+    uint position = line.find(delimiter, 0);
+
+    if(position == std::string::npos){
+        m_isMassifFile = false;
+        return;
+    }
+
+    std::string res = trim(line.substr(position, line.size() - position));
+    *type = res;
 }
 
 // posto STL nema svoju trim fju, koristila sam implementaciju koju sam nasla na github-u: https://gist.github.com/letiantian/a51003ae3f9896ee68d8c51f26c9312f
