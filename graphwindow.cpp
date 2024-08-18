@@ -1,6 +1,7 @@
 #include "graphwindow.h"
 #include "ui_graphwindow.h"
 
+#include "parser.h"
 #include <QMainWindow>
 
 #include <QJsonDocument>
@@ -129,6 +130,12 @@ void GraphWindow::on_pbSave_clicked() {
         QString res ="background-color: " +  ui->comboBackground->currentText();
         ui->graphicsView->setStyleSheet(res);
     }
+
+    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.6282");
+    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.30488");
+    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.6100");
+    Parser* parser = new Parser("/home/pc/Desktop/massif.out.30871");
+    parser->parseFile();
 }
 
 void GraphWindow::on_actionClose_triggered() {

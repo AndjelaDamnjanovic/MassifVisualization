@@ -12,11 +12,13 @@ SOURCES += \
     graphwindow.cpp \
     heaptree.cpp \
     main.cpp \
+    parser.cpp \
     snapshot.cpp
 
 HEADERS += \
     graphwindow.h \
     heaptree.h \
+    parser.h \
     snapshot.h
 
 FORMS += \
