@@ -26,6 +26,17 @@ public:
     uint getLineNum() const;
     void setLineNum(const uint *);
 
+    uint getLevel() const;
+    void setLevel(const uint *);
+
+    HeapTreeNode *getParent() const;
+    void setParent(HeapTreeNode *);
+
+    QVector<HeapTreeNode *> getChildren() const;
+    void setChildren(const QVector<HeapTreeNode *> *);
+    void addChild(HeapTreeNode *);
+
+
 private:
     quint64 m_allocatedBytes;
     std::string m_address;
@@ -34,7 +45,9 @@ private:
     uint m_lineNum;
 
     // rad sa drvetom poziva
-    QVector<HeapTreeNode> m_children;
+    QVector<HeapTreeNode *> m_children;
+    HeapTreeNode* m_parent;
+    uint m_level;
 
 };
 

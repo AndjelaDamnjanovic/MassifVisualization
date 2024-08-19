@@ -10,14 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     graphwindow.cpp \
-    heaptree.cpp \
+    heaptreenode.cpp \
     main.cpp \
     parser.cpp \
     snapshot.cpp
 
 HEADERS += \
     graphwindow.h \
-    heaptree.h \
+    heaptreenode.h \
     parser.h \
     snapshot.h
 

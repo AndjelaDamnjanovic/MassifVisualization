@@ -1,12 +1,12 @@
-#include "HeapTreeNode.h"
+#include "heaptreenode.h"
 
 HeapTreeNode::HeapTreeNode()
-    : m_percentage(0)
-    , m_allocatedBytes(0)
+    : m_allocatedBytes(0)
     , m_address("")
     , m_functionName("")
     , m_fileName("")
     , m_lineNum(0)
+    , m_parent(nullptr)
 {
 
 }
@@ -65,3 +65,40 @@ void HeapTreeNode::setLineNum(const uint *lineNum)
 {
     m_lineNum = *lineNum;
 }
+
+uint HeapTreeNode::getLevel() const
+{
+    return m_level;
+}
+
+void HeapTreeNode::setLevel(const uint *level)
+{
+    m_level = *level;
+}
+
+HeapTreeNode *HeapTreeNode::getParent() const
+{
+    return m_parent;
+}
+
+void HeapTreeNode::setParent(HeapTreeNode *parent)
+{
+    m_parent = parent;
+}
+
+QVector<HeapTreeNode *> HeapTreeNode::getChildren() const
+{
+    return m_children;
+}
+
+void HeapTreeNode::setChildren(const QVector<HeapTreeNode *> *children)
+{
+    for(auto child : *children)
+        addChild(child);
+}
+
+void HeapTreeNode::addChild(HeapTreeNode *child)
+{
+    m_children.append(child);
+}
+
