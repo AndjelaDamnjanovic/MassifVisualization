@@ -6,6 +6,7 @@ HeapTreeNode::HeapTreeNode()
     , m_functionName("")
     , m_fileName("")
     , m_lineNum(0)
+    , m_level(0)
     , m_parent(nullptr)
 {
 

@@ -210,7 +210,9 @@ void Parser::parseSnapshots(std::ifstream &file)
         return;
     }
 
-    while (std::getline(file, line)){
+    for(int i =0; i<10;i++){
+        std::getline(file, line);
+    //while (std::getline(file, line)){
         Snapshot* snap = new Snapshot();
         uint num;
         parseSnapshotNumber(line, &num);
@@ -281,7 +283,7 @@ void Parser::parseSnapshots(std::ifstream &file)
             break;
         }
 
-        if(snapshotType.compare("empty")){
+        if(snapshotType.compare("empty") == 0){
             std::cout<<"Empty"<<std::endl;
             snap->setSnapshotType((SnapshotType::EMPTY));
             std::getline(file, line);
@@ -289,18 +291,19 @@ void Parser::parseSnapshots(std::ifstream &file)
                 m_isMassifFile = false;
                 return;
             }
-        }else if(snapshotType.compare("detailed")){
+        }else if(snapshotType.compare("detailed") == 0){
             std::cout<<"Detailed"<<std::endl;
             snap->setSnapshotType((SnapshotType::DETAILED));
             parseDetailedShapshot(file);
-        }else if(snapshotType.compare("peak")){
+        }else if(snapshotType.compare("peak") == 0){
             std::cout<<"Peak"<<std::endl;
             snap->setSnapshotType((SnapshotType::PEAK));
-            parseDetailedShapshot(file);
+
+            HeapTreeNode* htNode = parseDetailedShapshot(file);
         }else{
             break;
         }
-        break;
+        //break;
     }
 }
 
@@ -319,10 +322,12 @@ void Parser::parseSnapshotNumber(const std::string &line, uint *number){
         return;
     }
 
-    std::string index = trim(line.substr(position, line.size() - position));
+    std::string index = trim(line.substr(position + 1, line.size() - position));
+    //std::cout<<index<<std::endl;
     QString res = QString::fromStdString(index);
     uint num = res.toUInt();
     *number = num;
+    //std::cout<<num<<std::endl;
     //std::cout<<snap->getSnapshotIndex()<<std::endl;
 }
 
@@ -342,10 +347,11 @@ void Parser::parseSnapshotTime(const std::string &line, quint64 *time)
         return;
     }
 
-    std::string timeVal = trim(line.substr(position, line.size() - position));
+    std::string timeVal = trim(line.substr(position + 1, line.size() - position));
     QString res = QString::fromStdString(timeVal);
     quint64 num = res.toULongLong();
     *time = num;
+    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotUsefulB(const std::string &line, quint64 *useful)
@@ -364,10 +370,11 @@ void Parser::parseSnapshotUsefulB(const std::string &line, quint64 *useful)
         return;
     }
 
-    std::string memB = trim(line.substr(position, line.size() - position));
+    std::string memB = trim(line.substr(position + 1, line.size() - position));
     QString res = QString::fromStdString(memB);
     quint64 num = res.toULongLong();
     *useful = num;
+    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotExtraB(const std::string &line, quint64 *extra)
@@ -386,10 +393,11 @@ void Parser::parseSnapshotExtraB(const std::string &line, quint64 *extra)
         return;
     }
 
-    std::string memB = trim(line.substr(position, line.size() - position));
+    std::string memB = trim(line.substr(position + 1, line.size() - position));
     QString res = QString::fromStdString(memB);
     quint64 num = res.toULongLong();
     *extra = num;
+    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotStacks(const std::string &line, quint64 *stacks)
@@ -408,10 +416,11 @@ void Parser::parseSnapshotStacks(const std::string &line, quint64 *stacks)
         return;
     }
 
-    std::string memB = trim(line.substr(position, line.size() - position));
+    std::string memB = trim(line.substr(position + 1, line.size() - position));
     QString res = QString::fromStdString(memB);
     quint64 num = res.toULongLong();
     *stacks = num;
+    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotType(const std::string &line, std::string *type)
@@ -429,13 +438,20 @@ void Parser::parseSnapshotType(const std::string &line, std::string *type)
         return;
     }
 
-    std::string res = trim(line.substr(position, line.size() - position));
+    std::string res = trim(line.substr(position + 1, line.size() - position));
     *type = res;
+    //std::cout<<res<<std::endl;
 }
 
 HeapTreeNode* Parser::parseDetailedShapshot(std::ifstream &file)
 {
+    std::cout<<"Sve ok!"<<std::endl;
+    HeapTreeNode* ht = new HeapTreeNode;
+    std::string line;
 
+    std::getline(file, line);
+    std::cout<<line<<std::endl;
+    return ht;
 }
 
 // posto STL nema svoju trim fju, koristila sam implementaciju koju sam nasla na github-u: https://gist.github.com/letiantian/a51003ae3f9896ee68d8c51f26c9312f
