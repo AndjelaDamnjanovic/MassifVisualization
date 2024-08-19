@@ -2,6 +2,7 @@
 #define SNAPSHOT_H
 
 #include <qglobal.h>
+#include <heaptreenode.h>
 
 enum class SnapshotType {
     EMPTY,
@@ -33,6 +34,9 @@ public:
     quint64 getStacks() const;
     void setStacks(const quint64 *);
 
+    HeapTreeNode* getCallTree() const;
+    void setCallTree(HeapTreeNode *);
+
     SnapshotType getSnapshotType() const;
     void setSnapshotType(const SnapshotType);
 
@@ -50,6 +54,7 @@ private:
     quint64 m_stacksB;
 
     SnapshotType m_snapshotType;
+    HeapTreeNode *m_callTree;
 };
 
 #endif // SNAPSHOT_H

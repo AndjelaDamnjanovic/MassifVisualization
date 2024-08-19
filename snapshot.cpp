@@ -78,6 +78,16 @@ void Snapshot::setStacks(const quint64 *stackB)
     m_stacksB = *stackB;
 }
 
+HeapTreeNode *Snapshot::getCallTree() const
+{
+    return m_callTree;
+}
+
+void Snapshot::setCallTree(HeapTreeNode *callTree)
+{
+    m_callTree = callTree;
+}
+
 SnapshotType Snapshot::getSnapshotType() const
 {
     return m_snapshotType;

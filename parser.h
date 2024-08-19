@@ -61,6 +61,7 @@ private:
     void parseSnapshotExtraB(const std::string &, quint64*);
     void parseSnapshotStacks(const std::string &, quint64*);
     void parseSnapshotType(const std::string &, std::string *);
+    HeapTreeNode* parseDetailedShapshot(std::ifstream &);
 
     std::string trim(const std::string &);
 

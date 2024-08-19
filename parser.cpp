@@ -284,12 +284,19 @@ void Parser::parseSnapshots(std::ifstream &file)
         if(snapshotType.compare("empty")){
             std::cout<<"Empty"<<std::endl;
             snap->setSnapshotType((SnapshotType::EMPTY));
+            std::getline(file, line);
+            if ((line.rfind("#-----------", 0) != 0) && !file.eof()) {
+                m_isMassifFile = false;
+                return;
+            }
         }else if(snapshotType.compare("detailed")){
             std::cout<<"Detailed"<<std::endl;
             snap->setSnapshotType((SnapshotType::DETAILED));
+            parseDetailedShapshot(file);
         }else if(snapshotType.compare("peak")){
             std::cout<<"Peak"<<std::endl;
             snap->setSnapshotType((SnapshotType::PEAK));
+            parseDetailedShapshot(file);
         }else{
             break;
         }
@@ -424,6 +431,11 @@ void Parser::parseSnapshotType(const std::string &line, std::string *type)
 
     std::string res = trim(line.substr(position, line.size() - position));
     *type = res;
+}
+
+HeapTreeNode* Parser::parseDetailedShapshot(std::ifstream &file)
+{
+
 }
 
 // posto STL nema svoju trim fju, koristila sam implementaciju koju sam nasla na github-u: https://gist.github.com/letiantian/a51003ae3f9896ee68d8c51f26c9312f
