@@ -210,9 +210,7 @@ void Parser::parseSnapshots(std::ifstream &file)
         return;
     }
 
-    for(int i =0; i<10;i++){
-        std::getline(file, line);
-    //while (std::getline(file, line)){
+    while (std::getline(file, line)){
         Snapshot* snap = new Snapshot();
         uint num;
         parseSnapshotNumber(line, &num);
@@ -445,12 +443,89 @@ void Parser::parseSnapshotType(const std::string &line, std::string *type)
 
 HeapTreeNode* Parser::parseDetailedShapshot(std::ifstream &file)
 {
-    std::cout<<"Sve ok!"<<std::endl;
+    //std::cout<<"Sve ok!"<<std::endl;
     HeapTreeNode* ht = new HeapTreeNode;
     std::string line;
 
     std::getline(file, line);
-    std::cout<<line<<std::endl;
+    //std::cout<<line<<std::endl;
+    uint posN = line.find("n");
+    uint posDot = line.find(":");
+
+    std::string childrenNum =line.substr(posN + 1, posDot - posN - 1);
+    uint numChildren = QString::fromStdString(childrenNum).toUInt();
+    ht->setNumOfChildern(&numChildren);
+    std::cout<<ht->getNumOfChildren()<<std::endl;
+
+    std::regex regexp(" [1-9][0-9]+ ");
+    std::smatch m;
+
+    std::regex_search(line, m, regexp);
+    std::string bytesAllocated = trim(m.str(0));
+    quint64 resBytes = QString::fromStdString(bytesAllocated).toULongLong();
+    ht->setAllocatedBytes(&resBytes);
+    //std::cout<<ht->getAllocatedBytes()<<std::endl;
+
+    HeapTreeNode* parent = ht;
+    std::getline(file, line);
+    //std::cout<<line<<std::endl;
+
+    while(line.find("threshold") == std::string::npos && line.find("#-----------") == std::string::npos){
+        //std::cout<<line<<std::endl;
+
+        HeapTreeNode *currNode = new HeapTreeNode;
+        posN = line.find("n");
+        posDot = line.find(":");
+
+        childrenNum =line.substr(posN + 1, posDot - posN - 1);
+        numChildren = QString::fromStdString(childrenNum).toUInt();
+        currNode->setNumOfChildern(&numChildren);
+        currNode->setParent(parent);
+        std::cout<<"Num of children: ";
+        std::cout<<currNode->getNumOfChildren()<<std::endl;
+
+        std::regex_search(line, m, regexp);
+        bytesAllocated = trim(m.str(0));
+        resBytes = QString::fromStdString(bytesAllocated).toULongLong();
+        currNode->setAllocatedBytes(&resBytes);
+        std::cout<<"Allocated bytes: ";
+        std::cout<<currNode->getAllocatedBytes()<<std::endl;
+
+        std::regex regexp("0x[0-9A-F]{6}");
+        std::regex_search(line, m, regexp);
+        std::string hexadecimal = trim(m.str(0));
+        currNode->setAddress(&hexadecimal);
+
+        std::cout<<currNode->getAddress()<<std::endl;
+
+        std::regex regexp2(": [a-zA-Z_]+ ");
+        std::regex_search(line, m, regexp2);
+        std::string fion = trim(m.str(0).erase(0, 1));
+        currNode->setFunctionName(&fion);
+
+        std::cout<<currNode->getFunctionName()<<std::endl;
+
+        std::regex regexp3("\\([a-zA-Z0-9\.:]+\\)");
+        std::regex_search(line, m, regexp3);
+        std::string res = trim(m.str(0).erase(0, 1));
+        std::string final = trim(res.erase(res.size() - 1, 1));
+        //currNode->setFunctionName(&res);
+
+
+        std::string delimiter = ":";
+        uint position = final.find(delimiter, 0);
+        std::string filename = final.substr(0, position);
+        currNode->setFileName(&filename);
+        std::cout<<currNode->getFileName()<<std::endl;
+
+        std::string lineNum = final.substr(position + 1, final.size() - position);
+        uint numLine = QString::fromStdString(lineNum).toUInt();
+        currNode->setLineNum(&numLine);
+        std::cout<<currNode->getLineNum()<<std::endl;
+
+        std::getline(file, line);
+    }
+
     return ht;
 }
 

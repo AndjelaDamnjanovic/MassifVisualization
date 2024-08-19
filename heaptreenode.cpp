@@ -1,7 +1,8 @@
 #include "heaptreenode.h"
 
 HeapTreeNode::HeapTreeNode()
-    : m_allocatedBytes(0)
+    : m_numOfChildren(0)
+    , m_allocatedBytes(0)
     , m_address("")
     , m_functionName("")
     , m_fileName("")
@@ -101,5 +102,15 @@ void HeapTreeNode::setChildren(const QVector<HeapTreeNode *> *children)
 void HeapTreeNode::addChild(HeapTreeNode *child)
 {
     m_children.append(child);
+}
+
+uint HeapTreeNode::getNumOfChildren() const
+{
+    return m_numOfChildren;
+}
+
+void HeapTreeNode::setNumOfChildern(const uint *num)
+{
+    m_numOfChildren = *num;
 }
 

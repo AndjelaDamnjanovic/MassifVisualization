@@ -36,6 +36,9 @@ public:
     void setChildren(const QVector<HeapTreeNode *> *);
     void addChild(HeapTreeNode *);
 
+    uint getNumOfChildren() const;
+    void setNumOfChildern(const uint *);
+
 
 private:
     quint64 m_allocatedBytes;
@@ -43,6 +46,7 @@ private:
     std::string m_functionName;
     std::string m_fileName;
     uint m_lineNum;
+    uint m_numOfChildren;
 
     // rad sa drvetom poziva
     QVector<HeapTreeNode *> m_children;

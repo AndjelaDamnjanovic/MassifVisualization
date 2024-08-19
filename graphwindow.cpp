@@ -133,8 +133,9 @@ void GraphWindow::on_pbSave_clicked() {
 
     //Parser* parser = new Parser("/home/pc/Desktop/massif.out.6282");
     //Parser* parser = new Parser("/home/pc/Desktop/massif.out.30488");
-    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.6100");
-    Parser* parser = new Parser("/home/pc/Desktop/massif.out.30871");
+    Parser* parser = new Parser("/home/pc/Desktop/massif.out.6100");
+    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.30871");
+    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.11372");
     parser->parseFile();
 }
 
