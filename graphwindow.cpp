@@ -37,41 +37,11 @@ GraphWindow::GraphWindow(QWidget *parent) :
     ui(new Ui::GraphWindow)
 {
     ui->setupUi(this);
-    fillMap();
-    indexColors();
 }
 
 GraphWindow::~GraphWindow()
 {
     delete ui;
-}
-
-
-void GraphWindow::fillMap() {
-    m_colors.insert("red", "#FF0000");
-    m_colors.insert("blue", "#ADD8E6");
-    m_colors.insert("green", "#87ab69");
-    m_colors.insert("yellow", "#FFFF00");
-    m_colors.insert("orange", "#FFE5B4");
-    m_colors.insert("purple", "#A020F0");
-    m_colors.insert("brown", "#964B00");
-    m_colors.insert("cyan", "#00008B");
-    m_colors.insert("pink", "#FFC0CB");
-    m_colors.insert("off white", "#E8E4D6");
-
-}
-
-void GraphWindow::indexColors() {
-    m_indices.insert("off white", 0);
-    m_indices.insert("cyan", 8);
-    m_indices.insert("blue", 1);
-    m_indices.insert("pink", 9);
-    m_indices.insert("brown", 7);
-    m_indices.insert("purple", 6);
-    m_indices.insert("orange", 5);
-    m_indices.insert("yellow", 4);
-    m_indices.insert("green", 3);
-    m_indices.insert("red", 2);
 }
 
 void GraphWindow::warning(QString s) {
@@ -88,33 +58,6 @@ void GraphWindow::SaveAsPic(const QString& m_ext){
         pixMap.save(fileName);
     }
 
-}
-
-QVector<QPointF> GraphWindow::rotatePoints(QVector<QPointF> *points)
-{
-    QVector<QPointF> res;
-    for(auto point : *points){
-        QPointF newPoint = QPointF(-point.y(), point.x());
-        res.append(newPoint);
-    }
-    return res;
-}
-
-QVector<QPointF> GraphWindow::translatePoints(const QVector<QPointF> *points)
-{
-    /*
-    QPointF center = QPointF(50, 500);
-    qreal xDiff = center.x();
-    qreal yDiff = center.y();
-    */
-    QRect rect = ui->graphicsView->geometry();
-    qreal h = rect.height();
-    QVector<QPointF> res;
-    for(auto point : *points){
-        QPointF newPoint = QPointF(point.x(), h - point.y());
-        res.append(newPoint);
-    }
-    return res;
 }
 
 void GraphWindow::on_actionSaveAsPng_triggered() {
@@ -170,6 +113,9 @@ void GraphWindow::on_pbSave_clicked() {
         QString res ="background-color: " +  ui->comboBackground->currentText();
         ui->graphicsView->setStyleSheet(res);
     }
+
+    if(m_path != "")
+        updateGraph();
 }
 
 void GraphWindow::drawGraph(std::string filename)
@@ -191,8 +137,8 @@ void GraphWindow::drawGraph(std::string filename)
         points->append(dot);
     }
 
-    QPen pen(QColor(ui->comboGraph->currentText())); // Set the pen color to red
-    pen.setWidth(ui->spinWidth->text().toInt());   // Optional: set the line width
+    QPen pen(QColor(ui->comboGraph->currentText()));
+    pen.setWidth(ui->spinWidth->text().toInt());
     points->setPen(pen);
 
     QChart *chart = new QChart();
@@ -238,6 +184,11 @@ void GraphWindow::drawGraph(std::string filename)
     setCentralWidget(centralWidget);
     resize(750, 600);
     show();
+}
+
+void GraphWindow::updateGraph()
+{
+    drawGraph(m_path);
 }
 
 void GraphWindow::on_actionClose_triggered() {

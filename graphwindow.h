@@ -21,13 +21,9 @@ class GraphWindow : public QMainWindow {
 public:
     GraphWindow(QWidget* parent = nullptr);
     ~GraphWindow();
-    QMap<QString, QString> m_colors;
-    QMap<QString, int> m_indices;
-    void fillMap();
-    void indexColors();
     void SaveAsPic(const QString& m_ext);
-    QVector<QPointF> rotatePoints(QVector<QPointF> *);
-    QVector<QPointF> translatePoints(const QVector<QPointF> *);
+    void drawGraph(std::string);
+    void updateGraph();
 
 signals:
 
@@ -44,8 +40,6 @@ private slots:
     void on_actionClose2_triggered();
     void on_actionSave2_triggered();
     void on_pbSave_clicked();
-
-    void drawGraph(std::string);
 
 private:
     Ui::GraphWindow* ui;
