@@ -119,6 +119,12 @@ void GraphWindow::on_pbSave_clicked() {
         m_scatterPlotChecked = true;
     }
 
+    if(ui->cbXaxis->isChecked()){
+        m_timeUnit = true;
+    }else{
+        m_timeUnit = false;
+    }
+
     if(m_path != "")
         updateGraph();
 }
@@ -143,17 +149,24 @@ void GraphWindow::updateGraph()
     drawGraph(m_path);
 }
 
-void GraphWindow::drawNormalGraph(Parser *parser)
+void GraphWindow::drawNormalGraph(const Parser *parser)
 {
-    QLineSeries *points = new QLineSeries();
+
+    QLineSeries *points = new QLineSeries;
     QVector<quint64> bytes = parser->getTotalBytes();
     QVector<quint64> times = parser->getTimesI();
     QVector<int> snapshots;
+    QPointF dot;
+
     for(int i = 0; i < bytes.size(); i++){
         snapshots.append(i);
-        QPointF dot = QPointF(snapshots[i], bytes[i]);
+        if(m_timeUnit)
+            dot = QPointF(times[i], bytes[i]);
+        else
+            dot = QPointF(snapshots[i], bytes[i]);
         points->append(dot);
     }
+
 
     QPen pen(QColor(ui->comboGraph->currentText()));
     pen.setWidth(ui->spinWidth->text().toInt());
@@ -204,20 +217,24 @@ void GraphWindow::drawNormalGraph(Parser *parser)
     show();
 }
 
-void GraphWindow::drawScatterPlot(Parser *parser)
+void GraphWindow::drawScatterPlot(const Parser *parser)
 {
     QScatterSeries *points = new QScatterSeries();
     points->setName("parser1");
     points->setMarkerShape(QScatterSeries::MarkerShapeCircle);
-    points->setMarkerSize(15.0);
+    points->setMarkerSize(5.0);
 
     QVector<quint64> bytes = parser->getTotalBytes();
     QVector<quint64> times = parser->getTimesI();
     QVector<int> snapshots;
+    QPointF dot;
 
     for(int i = 0; i < bytes.size(); i++){
         snapshots.append(i);
-        QPointF dot = QPointF(snapshots[i], bytes[i]);
+        if(m_timeUnit)
+            dot = QPointF(times[i], bytes[i]);
+        else
+            dot = QPointF(snapshots[i], bytes[i]);
         points->append(dot);
     }
 

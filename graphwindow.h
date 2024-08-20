@@ -7,6 +7,8 @@
 #include <QString>
 #include <QPointF>
 #include <QMap>
+#include <QLineSeries>
+#include <QChart>
 
 class QGraphicsScene;
 
@@ -25,8 +27,8 @@ public:
     void SaveAsPic(const QString& m_ext);
     void drawGraph(std::string);
     void updateGraph();
-    void drawNormalGraph(Parser *);
-    void drawScatterPlot(Parser *);
+    void drawNormalGraph(const Parser *);
+    void drawScatterPlot(const Parser *);
 
 signals:
 
@@ -49,6 +51,7 @@ private:
     std::string m_path = "";
     bool m_normalGraphChecked = true;
     bool m_scatterPlotChecked = false;
+    bool m_timeUnit = false;
 
 };
 #endif  // GRAPHWINDOW_H

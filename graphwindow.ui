@@ -87,7 +87,7 @@ background-color:  #171717;</string>
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>30</y>
+      <y>0</y>
       <width>241</width>
       <height>451</height>
      </rect>
@@ -105,10 +105,10 @@ background-color:  #171717;</string>
      <widget class="QLabel" name="lblGraphColor">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>20</y>
+        <x>0</x>
+        <y>0</y>
         <width>121</width>
-        <height>51</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
@@ -119,9 +119,9 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>90</y>
+        <y>50</y>
         <width>131</width>
-        <height>51</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -132,7 +132,7 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>30</y>
+        <y>10</y>
         <width>86</width>
         <height>25</height>
        </rect>
@@ -192,7 +192,7 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>100</y>
+        <y>50</y>
         <width>86</width>
         <height>25</height>
        </rect>
@@ -252,9 +252,9 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>160</y>
+        <y>90</y>
         <width>131</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -265,7 +265,7 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>160</y>
+        <y>90</y>
         <width>81</width>
         <height>26</height>
        </rect>
@@ -278,9 +278,9 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>210</y>
+        <y>134</y>
         <width>221</width>
-        <height>25</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
@@ -291,7 +291,7 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>250</y>
+        <y>160</y>
         <width>221</width>
         <height>17</height>
        </rect>
@@ -304,7 +304,7 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>280</y>
+        <y>180</y>
         <width>112</width>
         <height>23</height>
        </rect>
@@ -320,13 +320,26 @@ background-color:  #171717;</string>
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>310</y>
+        <y>210</y>
         <width>112</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
        <string>scatter plot</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbXaxis">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>270</y>
+        <width>221</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> Set time-unit as x-axis</string>
       </property>
      </widget>
     </widget>
