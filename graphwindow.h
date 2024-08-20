@@ -2,6 +2,7 @@
 #define GRAPHWINDOW_H
 
 #include <QMainWindow>
+#include "parser.h"
 #include <iostream>
 #include <QString>
 #include <QPointF>
@@ -24,6 +25,8 @@ public:
     void SaveAsPic(const QString& m_ext);
     void drawGraph(std::string);
     void updateGraph();
+    void drawNormalGraph(Parser *);
+    void drawScatterPlot(Parser *);
 
 signals:
 
@@ -44,6 +47,8 @@ private slots:
 private:
     Ui::GraphWindow* ui;
     std::string m_path = "";
+    bool m_normalGraphChecked = true;
+    bool m_scatterPlotChecked = false;
 
 };
 #endif  // GRAPHWINDOW_H

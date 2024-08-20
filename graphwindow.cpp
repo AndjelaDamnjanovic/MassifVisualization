@@ -4,24 +4,21 @@
 #include "parser.h"
 #include <QMainWindow>
 #include <QFile>
-
-#include <QJsonDocument>
-#include <future>
+#include <QScatterSeries>
 #include <QGraphicsScene>
+
 #include <QGraphicsView>
 #include <fstream>
 #include <string>
 #include <QString>
-#include <QListWidgetItem>
+
 #include <QFileDialog>
-#include <QTextEdit>
 #include <QWidget>
 #include <QMessageBox>
 #include <iostream>
 #include <QShortcut>
 #include <cmath>
-#include <QTime>
-#include <QIcon>
+
 #include <sstream>
 #include <QSplineSeries>
 #include <unistd.h>
@@ -114,6 +111,14 @@ void GraphWindow::on_pbSave_clicked() {
         ui->graphicsView->setStyleSheet(res);
     }
 
+    if(ui->rbGeneric->isChecked()){
+        m_normalGraphChecked = true;
+        m_scatterPlotChecked = false;
+    }else{
+        m_normalGraphChecked = false;
+        m_scatterPlotChecked = true;
+    }
+
     if(m_path != "")
         updateGraph();
 }
@@ -127,6 +132,19 @@ void GraphWindow::drawGraph(std::string filename)
         warning("Error! This is not a massif file! Please enter a valid massif file!");
     }
 
+    if(m_normalGraphChecked)
+        drawNormalGraph(parser);
+    else
+        drawScatterPlot(parser);
+}
+
+void GraphWindow::updateGraph()
+{
+    drawGraph(m_path);
+}
+
+void GraphWindow::drawNormalGraph(Parser *parser)
+{
     QLineSeries *points = new QLineSeries();
     QVector<quint64> bytes = parser->getTotalBytes();
     QVector<quint64> times = parser->getTimesI();
@@ -186,9 +204,72 @@ void GraphWindow::drawGraph(std::string filename)
     show();
 }
 
-void GraphWindow::updateGraph()
+void GraphWindow::drawScatterPlot(Parser *parser)
 {
-    drawGraph(m_path);
+    QScatterSeries *points = new QScatterSeries();
+    points->setName("parser1");
+    points->setMarkerShape(QScatterSeries::MarkerShapeCircle);
+    points->setMarkerSize(15.0);
+
+    QVector<quint64> bytes = parser->getTotalBytes();
+    QVector<quint64> times = parser->getTimesI();
+    QVector<int> snapshots;
+
+    for(int i = 0; i < bytes.size(); i++){
+        snapshots.append(i);
+        QPointF dot = QPointF(snapshots[i], bytes[i]);
+        points->append(dot);
+    }
+
+    QPen pen(QColor(ui->comboGraph->currentText()));
+    pen.setWidth(ui->spinWidth->text().toInt());
+    points->setPen(pen);
+
+    QChart *chart = new QChart();
+    chart->addSeries(points);
+    chart->legend()->setMarkerShape(QLegend::MarkerShapeFromSeries);
+
+    QString title = "valgrind --tool=massif ";
+    QVector<std::string> args = parser->getMassifArgs();
+    std::string command = parser->getCommand();
+    for(auto arg : args){
+        title = title + QString::fromStdString(arg) + " ";
+    }
+    title += QString::fromStdString(command);
+
+    chart->setTitle(title);
+    chart->createDefaultAxes();
+    chart->setBackgroundBrush(QColor(ui->comboBackground->currentText()));
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    QGraphicsView *graphicsView = ui->graphicsView;
+    QGraphicsScene *scene = new QGraphicsScene(graphicsView);
+    graphicsView->setScene(scene);
+
+    chartView->setGeometry(graphicsView->rect());
+    scene->addWidget(chartView);
+
+    QHBoxLayout *screenLayout = new QHBoxLayout;
+    QVBoxLayout *leftScreenLayout = new QVBoxLayout;
+    QVBoxLayout *rightScreenLayout = new QVBoxLayout;
+    rightScreenLayout->addWidget(graphicsView);
+
+    QTabWidget *tab = ui->tabLeft;
+
+    leftScreenLayout->addWidget(tab);
+    screenLayout->addLayout(leftScreenLayout);
+    screenLayout->addLayout(rightScreenLayout);
+
+    QWidget *centralWidget = new QWidget();
+    centralWidget->setLayout(screenLayout);
+    centralWidget->setStyleSheet("background-color: #222222;");
+
+
+    setCentralWidget(centralWidget);
+    resize(750, 600);
+    show();
 }
 
 void GraphWindow::on_actionClose_triggered() {
