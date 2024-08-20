@@ -428,8 +428,10 @@ void GraphWindow::drawMultipleScatterPlot()
         pen.setWidth(ui->spinWidth->text().toInt());
 
         QScatterSeries *series = new QScatterSeries();
+        series->setPen(pen);
         series->setName(QString::fromStdString(parser->getCommand()));
         series->setMarkerShape(QScatterSeries::MarkerShapeCircle);
+        chart->legend()->setMarkerShape(QLegend::MarkerShapeFromSeries);
         series->setMarkerSize(5.0);
         QVector<quint64> bytes = parser->getTotalBytes();
         QVector<quint64> times = parser->getTimesI();
@@ -438,12 +440,10 @@ void GraphWindow::drawMultipleScatterPlot()
 
         for(int i = 0; i < bytes.size(); i++){
             snapshots.append(i);
-            //std::cout<<bytes[i]<<" "<<snapshots[i]<<" "<<times[i]<<std::endl;
             if(m_timeUnit)
                 dot = QPointF(times[i], bytes[i]);
             else
                 dot = QPointF(snapshots[i], bytes[i]);
-            series->setPen(pen);
             series->append(dot);
         }
         chart->addSeries(series);
