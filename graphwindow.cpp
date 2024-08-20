@@ -68,11 +68,12 @@ void GraphWindow::on_actionSaveAsJpg_triggered() {
 
 void GraphWindow::on_openOne_triggered(){
 
-    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/", "", nullptr, QFileDialog::DontUseNativeDialog);
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/pc/Desktop", "massif.out.*", nullptr, QFileDialog::DontUseNativeDialog);
 
     QFile open(file);
     if(open.size() == 0){
         warning("This file is empty!");
+        return;
     }
 
     std::string filename = file.toStdString();
@@ -82,9 +83,46 @@ void GraphWindow::on_openOne_triggered(){
 
     if (openFile.fail()){
         warning("Could not open a file!");
+        return;
     }else{
         drawGraph(filename);
     }
+}
+
+void GraphWindow::on_openMultiple_triggered()
+{
+    m_parsers.clear();
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Files"), "/home/pc/Desktop", "massif.out.*");
+
+    if(files.size() == 0){
+        return;
+    }
+
+    for(auto file : files){
+        std::cout<<file.toStdString()<<std::endl;
+        QFile open(file);
+        if(open.size() == 0){
+            warning("File " + file + " is empty!");
+            return;
+        }
+    }
+    m_files = new QStringList(files);
+    QVector<Parser *> parsers;
+
+    for(auto file : *m_files){
+        Parser *parser = new Parser(file.toStdString());
+        parser->parseFile();
+
+        if(parser->isValidMassifFile()){
+            parsers.append(parser);
+        }else{
+            warning("File " + file + " is not a valid massif file!");
+            return;
+        }
+    }
+
+    m_parsers = parsers;
+    drawMultipleGraphChart();
 }
 
 void GraphWindow::on_actionSaveAsPng2_triggered() {
@@ -287,6 +325,79 @@ void GraphWindow::drawScatterPlot(const Parser *parser)
     setCentralWidget(centralWidget);
     resize(750, 600);
     show();
+}
+
+void GraphWindow::drawMultipleGraphChart()
+{
+    if(m_normalGraphChecked)
+        drawMultipleNormalGraph();
+    else
+        drawMultipleScatterPlot();
+}
+
+void GraphWindow::drawMultipleNormalGraph()
+{
+    QChart *chart = new QChart();
+    chart->setTitle("Comparison of multiple massif files:");
+
+    QVector<QLineSeries*> seriesArray;
+
+    QVector<QColor> colors;
+    int itemIndex = ui->comboGraph->findText(ui->comboGraph->currentText());
+    int itemNum = ui->comboGraph->count();
+
+    for(int i = itemIndex; i < itemNum; i++){
+        if(ui->comboGraph->itemText(i) != ui->comboBackground->currentText())
+            colors.append(QColor(ui->comboGraph->itemText(i)));
+    }
+
+    for(int i = 0; i < itemIndex; i++){
+        if(ui->comboGraph->itemText(i) != ui->comboBackground->currentText())
+            colors.append(QColor(ui->comboGraph->itemText(i)));
+    }
+
+    int i = 0;
+
+    for(auto parser : m_parsers){
+        QPen pen(colors[i++]);
+        pen.setWidth(ui->spinWidth->text().toInt());
+
+        QLineSeries *series = new QLineSeries();
+        series->setName(QString::fromStdString(parser->getCommand()));
+        QVector<quint64> bytes = parser->getTotalBytes();
+        QVector<quint64> times = parser->getTimesI();
+        QVector<int> snapshots;
+        QPointF dot;
+
+        for(int i = 0; i < bytes.size(); i++){
+            snapshots.append(i);
+            //std::cout<<bytes[i]<<" "<<snapshots[i]<<" "<<times[i]<<std::endl;
+            if(m_timeUnit)
+                dot = QPointF(times[i], bytes[i]);
+            else
+                dot = QPointF(snapshots[i], bytes[i]);
+            series->setPen(pen);
+            series->append(dot);
+        }
+        chart->addSeries(series);
+    }
+
+    chart->createDefaultAxes();
+    chart->setBackgroundBrush(QColor(ui->comboBackground->currentText()));
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    QGraphicsView *graphicsView = ui->graphicsView;
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->addWidget(chartView);
+    graphicsView->setScene(scene);
+    chartView->setGeometry(graphicsView->rect());
+}
+
+void GraphWindow::drawMultipleScatterPlot()
+{
+
 }
 
 void GraphWindow::on_actionClose_triggered() {

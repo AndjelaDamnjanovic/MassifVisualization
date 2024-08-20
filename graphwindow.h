@@ -29,6 +29,9 @@ public:
     void updateGraph();
     void drawNormalGraph(const Parser *);
     void drawScatterPlot(const Parser *);
+    void drawMultipleGraphChart();
+    void drawMultipleNormalGraph();
+    void drawMultipleScatterPlot();
 
 signals:
 
@@ -40,6 +43,7 @@ private slots:
     void on_actionClose_triggered();
     void on_actionSave_triggered();
     void on_openOne_triggered();
+    void on_openMultiple_triggered();
     void on_actionSaveAsPng2_triggered();
     void on_actionSaveAsJpg2_triggered();
     void on_actionClose2_triggered();
@@ -52,6 +56,8 @@ private:
     bool m_normalGraphChecked = true;
     bool m_scatterPlotChecked = false;
     bool m_timeUnit = false;
+    QStringList* m_files;
+    QVector <Parser*> m_parsers;
 
 };
 #endif  // GRAPHWINDOW_H
