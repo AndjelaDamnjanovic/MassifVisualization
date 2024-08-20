@@ -3,6 +3,7 @@
 
 #include "parser.h"
 #include <QMainWindow>
+#include <QFile>
 
 #include <QJsonDocument>
 #include <future>
@@ -22,8 +23,14 @@
 #include <QTime>
 #include <QIcon>
 #include <sstream>
+#include <QSplineSeries>
 #include <unistd.h>
 #include <cstdlib>
+#include <QChart>
+#include <QChartView>
+#include <QVBoxLayout>
+
+QT_CHARTS_USE_NAMESPACE
 
 GraphWindow::GraphWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,7 +39,6 @@ GraphWindow::GraphWindow(QWidget *parent) :
     ui->setupUi(this);
     fillMap();
     indexColors();
-
 }
 
 GraphWindow::~GraphWindow()
@@ -84,6 +90,33 @@ void GraphWindow::SaveAsPic(const QString& m_ext){
 
 }
 
+QVector<QPointF> GraphWindow::rotatePoints(QVector<QPointF> *points)
+{
+    QVector<QPointF> res;
+    for(auto point : *points){
+        QPointF newPoint = QPointF(-point.y(), point.x());
+        res.append(newPoint);
+    }
+    return res;
+}
+
+QVector<QPointF> GraphWindow::translatePoints(const QVector<QPointF> *points)
+{
+    /*
+    QPointF center = QPointF(50, 500);
+    qreal xDiff = center.x();
+    qreal yDiff = center.y();
+    */
+    QRect rect = ui->graphicsView->geometry();
+    qreal h = rect.height();
+    QVector<QPointF> res;
+    for(auto point : *points){
+        QPointF newPoint = QPointF(point.x(), h - point.y());
+        res.append(newPoint);
+    }
+    return res;
+}
+
 void GraphWindow::on_actionSaveAsPng_triggered() {
     GraphWindow::SaveAsPic("png");
 }
@@ -96,15 +129,22 @@ void GraphWindow::on_actionSaveAsJpg_triggered() {
 void GraphWindow::on_openOne_triggered(){
 
     QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/", "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    QFile open(file);
+    if(open.size() == 0){
+        warning("This file is empty!");
+    }
+
     std::string filename = file.toStdString();
     std::ifstream openFile;
     m_path=filename;
     openFile.open(filename);
 
-    if (!openFile.fail()){
-        std::cout<<"Sve ok!"<<std::endl;
+    if (openFile.fail()){
+        warning("Could not open a file!");
+    }else{
+        drawGraph(filename);
     }
-
 }
 
 void GraphWindow::on_actionSaveAsPng2_triggered() {
@@ -130,13 +170,74 @@ void GraphWindow::on_pbSave_clicked() {
         QString res ="background-color: " +  ui->comboBackground->currentText();
         ui->graphicsView->setStyleSheet(res);
     }
+}
 
-    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.6282");
-    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.30488");
-    Parser* parser = new Parser("/home/pc/Desktop/massif.out.6100");
-    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.30871");
-    //Parser* parser = new Parser("/home/pc/Desktop/massif.out.11372");
+void GraphWindow::drawGraph(std::string filename)
+{
+    Parser* parser = new Parser(filename);
     parser->parseFile();
+
+    if(!parser->isValidMassifFile()){
+        warning("Error! This is not a massif file! Please enter a valid massif file!");
+    }
+
+    QLineSeries *points = new QLineSeries();
+    QVector<quint64> bytes = parser->getTotalBytes();
+    QVector<quint64> times = parser->getTimesI();
+    QVector<int> snapshots;
+    for(int i = 0; i < bytes.size(); i++){
+        snapshots.append(i);
+        QPointF dot = QPointF(snapshots[i], bytes[i]);
+        points->append(dot);
+    }
+
+    QPen pen(QColor(ui->comboGraph->currentText())); // Set the pen color to red
+    pen.setWidth(ui->spinWidth->text().toInt());   // Optional: set the line width
+    points->setPen(pen);
+
+    QChart *chart = new QChart();
+    chart->addSeries(points);
+    QString title = "valgrind --tool=massif ";
+    QVector<std::string> args = parser->getMassifArgs();
+    std::string command = parser->getCommand();
+    for(auto arg : args){
+        title = title + QString::fromStdString(arg) + " ";
+    }
+    title += QString::fromStdString(command);
+
+    chart->setTitle(title);
+    chart->createDefaultAxes();
+    chart->setBackgroundBrush(QColor(ui->comboBackground->currentText()));
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    QGraphicsView *graphicsView = ui->graphicsView;
+    QGraphicsScene *scene = new QGraphicsScene(graphicsView);
+    graphicsView->setScene(scene);
+
+    chartView->setGeometry(graphicsView->rect());
+    scene->addWidget(chartView);
+
+    QHBoxLayout *screenLayout = new QHBoxLayout;
+    QVBoxLayout *leftScreenLayout = new QVBoxLayout;
+    QVBoxLayout *rightScreenLayout = new QVBoxLayout;
+    rightScreenLayout->addWidget(graphicsView);
+
+    QTabWidget *tab = ui->tabLeft;
+
+    leftScreenLayout->addWidget(tab);
+    screenLayout->addLayout(leftScreenLayout);
+    screenLayout->addLayout(rightScreenLayout);
+
+    QWidget *centralWidget = new QWidget();
+    centralWidget->setLayout(screenLayout);
+    centralWidget->setStyleSheet("background-color: #222222;");
+
+
+    setCentralWidget(centralWidget);
+    resize(750, 600);
+    show();
 }
 
 void GraphWindow::on_actionClose_triggered() {

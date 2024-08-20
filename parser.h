@@ -26,6 +26,9 @@ public:
     bool isValidMassifFile() const;
     void parseFile();
 
+    QVector<quint64> getTotalBytes() const;
+    QVector<quint64> getTimesI() const;
+
 private:
     std::string m_filename;
     // za pasriranje snapshotova

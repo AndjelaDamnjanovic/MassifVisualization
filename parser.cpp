@@ -77,6 +77,16 @@ void Parser::parseFile()
     }
 }
 
+QVector<quint64> Parser::getTotalBytes() const
+{
+    return m_totalB;
+}
+
+QVector<quint64> Parser::getTimesI() const
+{
+    return m_timesI;
+}
+
 void Parser::parsePreamble(std::ifstream &file)
 {
     if(file.is_open())
@@ -271,7 +281,8 @@ void Parser::parseSnapshots(std::ifstream &file)
             std::cout<<snap->getStacks()<<std::endl;
         }else
             break;
-
+        m_totalB.append(totalB + stacks);
+        m_timesI.append(time);
         std::getline(file, line);
         std::string snapshotType="";
 

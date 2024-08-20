@@ -2,6 +2,8 @@
 #define GRAPHWINDOW_H
 
 #include <QMainWindow>
+#include <iostream>
+#include <QString>
 #include <QPointF>
 #include <QMap>
 
@@ -24,6 +26,8 @@ public:
     void fillMap();
     void indexColors();
     void SaveAsPic(const QString& m_ext);
+    QVector<QPointF> rotatePoints(QVector<QPointF> *);
+    QVector<QPointF> translatePoints(const QVector<QPointF> *);
 
 signals:
 
@@ -40,6 +44,8 @@ private slots:
     void on_actionClose2_triggered();
     void on_actionSave2_triggered();
     void on_pbSave_clicked();
+
+    void drawGraph(std::string);
 
 private:
     Ui::GraphWindow* ui;
