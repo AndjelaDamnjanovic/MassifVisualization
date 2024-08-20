@@ -68,6 +68,7 @@ void GraphWindow::on_actionSaveAsJpg_triggered() {
 
 void GraphWindow::on_openOne_triggered(){
 
+    m_parsers.clear();
     QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/pc/Desktop", "massif.out.*", nullptr, QFileDialog::DontUseNativeDialog);
 
     QFile open(file);
@@ -91,6 +92,7 @@ void GraphWindow::on_openOne_triggered(){
 
 void GraphWindow::on_openMultiple_triggered()
 {
+    m_path = "";
     m_parsers.clear();
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Files"), "/home/pc/Desktop", "massif.out.*");
 
@@ -165,6 +167,8 @@ void GraphWindow::on_pbSave_clicked() {
 
     if(m_path != "")
         updateGraph();
+    if(m_parsers.size() != 0)
+        updateMultipleGraphs();
 }
 
 void GraphWindow::drawGraph(std::string filename)
@@ -258,7 +262,8 @@ void GraphWindow::drawNormalGraph(const Parser *parser)
 void GraphWindow::drawScatterPlot(const Parser *parser)
 {
     QScatterSeries *points = new QScatterSeries();
-    points->setName("parser1");
+
+    points->setName("Heap memory usage of the program during time");
     points->setMarkerShape(QScatterSeries::MarkerShapeCircle);
     points->setMarkerSize(5.0);
 
@@ -371,7 +376,6 @@ void GraphWindow::drawMultipleNormalGraph()
 
         for(int i = 0; i < bytes.size(); i++){
             snapshots.append(i);
-            //std::cout<<bytes[i]<<" "<<snapshots[i]<<" "<<times[i]<<std::endl;
             if(m_timeUnit)
                 dot = QPointF(times[i], bytes[i]);
             else
@@ -397,7 +401,70 @@ void GraphWindow::drawMultipleNormalGraph()
 
 void GraphWindow::drawMultipleScatterPlot()
 {
+    std::cout<<"Ovde i treba da budem"<<std::endl;
+    QChart *chart = new QChart();
+    chart->setTitle("Comparison of multiple massif files:");
 
+    QVector<QScatterSeries*> seriesArray;
+
+    QVector<QColor> colors;
+    int itemIndex = ui->comboGraph->findText(ui->comboGraph->currentText());
+    int itemNum = ui->comboGraph->count();
+
+    for(int i = itemIndex; i < itemNum; i++){
+        if(ui->comboGraph->itemText(i) != ui->comboBackground->currentText())
+            colors.append(QColor(ui->comboGraph->itemText(i)));
+    }
+
+    for(int i = 0; i < itemIndex; i++){
+        if(ui->comboGraph->itemText(i) != ui->comboBackground->currentText())
+            colors.append(QColor(ui->comboGraph->itemText(i)));
+    }
+
+    int i = 0;
+
+    for(auto parser : m_parsers){
+        QPen pen(colors[i++]);
+        pen.setWidth(ui->spinWidth->text().toInt());
+
+        QScatterSeries *series = new QScatterSeries();
+        series->setName(QString::fromStdString(parser->getCommand()));
+        series->setMarkerShape(QScatterSeries::MarkerShapeCircle);
+        series->setMarkerSize(5.0);
+        QVector<quint64> bytes = parser->getTotalBytes();
+        QVector<quint64> times = parser->getTimesI();
+        QVector<int> snapshots;
+        QPointF dot;
+
+        for(int i = 0; i < bytes.size(); i++){
+            snapshots.append(i);
+            //std::cout<<bytes[i]<<" "<<snapshots[i]<<" "<<times[i]<<std::endl;
+            if(m_timeUnit)
+                dot = QPointF(times[i], bytes[i]);
+            else
+                dot = QPointF(snapshots[i], bytes[i]);
+            series->setPen(pen);
+            series->append(dot);
+        }
+        chart->addSeries(series);
+    }
+
+    chart->createDefaultAxes();
+    chart->setBackgroundBrush(QColor(ui->comboBackground->currentText()));
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    QGraphicsView *graphicsView = ui->graphicsView;
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->addWidget(chartView);
+    graphicsView->setScene(scene);
+    chartView->setGeometry(graphicsView->rect());
+}
+
+void GraphWindow::updateMultipleGraphs()
+{
+    drawMultipleGraphChart();
 }
 
 void GraphWindow::on_actionClose_triggered() {

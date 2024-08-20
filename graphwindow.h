@@ -32,6 +32,7 @@ public:
     void drawMultipleGraphChart();
     void drawMultipleNormalGraph();
     void drawMultipleScatterPlot();
+    void updateMultipleGraphs();
 
 signals:
 
