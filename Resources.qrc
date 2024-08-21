@@ -5,6 +5,5 @@
         <file>Resources/save.png</file>
         <file>Resources/savejpg.png</file>
         <file>Resources/savePNG.png</file>
-        <file>Resources/warning.png</file>
     </qresource>
 </RCC>
