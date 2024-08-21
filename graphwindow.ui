@@ -40,7 +40,7 @@ background-color:  #171717;</string>
    <widget class="QGraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>360</x>
       <y>10</y>
       <width>750</width>
       <height>600</height>
@@ -88,12 +88,12 @@ background-color:  #171717;</string>
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>241</width>
+      <width>351</width>
       <height>451</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="configTab">
      <property name="styleSheet">
@@ -549,6 +549,32 @@ background-color:  #171717;</string>
       <property name="text">
        <string>Open executable</string>
       </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="pieTab">
+     <attribute name="title">
+      <string>Pie charts</string>
+     </attribute>
+     <widget class="QListWidget" name="lwPies">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>341</width>
+        <height>381</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>331</width>
+        <height>391</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout"/>
      </widget>
     </widget>
    </widget>

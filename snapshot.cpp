@@ -83,6 +83,7 @@ HeapTreeNode *Snapshot::getCallTree() const
     return m_callTree;
 }
 
+
 void Snapshot::setCallTree(HeapTreeNode *callTree)
 {
     m_callTree = callTree;

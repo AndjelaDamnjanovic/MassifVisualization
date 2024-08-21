@@ -49,7 +49,7 @@ private:
     quint64 m_memHeapExtraB;
     quint64 m_stacks;
     //memHeapB/(memHeapB + memExtraB + stacks)
-    qreal m_precentage;
+    //qreal m_precentage;
 
 
     void parsePreamble(std::ifstream &);

@@ -40,7 +40,7 @@ public:
     QString rbTimeUnitChecked() const;
     QString getCommand() const;
     void lastHope();
-
+    void makePieCharts(const Parser *);
 signals:
 
 

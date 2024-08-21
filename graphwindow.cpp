@@ -2,6 +2,7 @@
 #include "ui_graphwindow.h"
 
 #include "parser.h"
+#include "snapshot.h"
 #include <QMainWindow>
 #include <QFile>
 #include <QScatterSeries>
@@ -11,6 +12,7 @@
 #include <fstream>
 #include <string>
 #include <QString>
+#include <QPieSeries>
 
 #include <QFileDialog>
 #include <QWidget>
@@ -20,6 +22,7 @@
 #include <cmath>
 
 #include <sstream>
+#include <QListWidget>
 #include <QSplineSeries>
 #include <unistd.h>
 #include <cstdlib>
@@ -91,6 +94,7 @@ void GraphWindow::on_openOne_triggered(){
     }
 }
 
+//fja je simbolicno nazvana jer je bila poslednja nada da cu uspeti da procitam fajl koji je generisala fja pbOpenExec :'(
 void GraphWindow::lastHope(){
 
     m_parsers.clear();
@@ -112,6 +116,44 @@ void GraphWindow::lastHope(){
         return;
     }else{
         drawGraph(filename);
+    }
+}
+
+void GraphWindow::makePieCharts(const Parser *parser)
+{
+    std::cout<<"Proba"<<std::endl;
+
+    qreal percentage;
+    std::string function;
+
+    QVector<Snapshot*> snaps = parser->getSnapshots();
+    QListWidget *lw = ui->lwPies;
+    QVBoxLayout *layout = ui->verticalLayout;
+    for(auto snap : snaps){
+        if(snap->getSnapshotType() != SnapshotType::EMPTY){
+            HeapTreeNode* ht = snap->getCallTree();
+            quint64 totalAlloc = ht->getAllocatedBytes();
+
+            QVector<HeapTreeNode*> children = ht->getChildren();
+            QPieSeries *series = new QPieSeries();
+            for(auto child : children){
+                quint64 childAlloc = child->getAllocatedBytes();
+                percentage = static_cast<qreal>(childAlloc) / static_cast<qreal>(totalAlloc);;
+                function = child->getFunctionName();
+                series->append(QString::fromStdString(function), percentage*100);
+            }
+
+            QChart *chart = new QChart();
+            chart->addSeries(series);
+            chart->legend()->setVisible(true);
+            chart->legend()->setAlignment(Qt::AlignRight);
+            chart->setMargins(QMargins(10, 10, 10, 10));
+            QChartView *chartView = new QChartView(chart);
+            chartView->setRenderHint(QPainter::Antialiasing);
+            //chartView->setMinimumHeight(300);
+            layout->addWidget(chartView);
+        }
+        //lw->setLayout(layout);
     }
 }
 
@@ -234,6 +276,8 @@ void GraphWindow::drawGraph(std::string filename)
         drawNormalGraph(parser);
     else
         drawScatterPlot(parser);
+
+    makePieCharts(parser);
 }
 
 void GraphWindow::updateGraph()

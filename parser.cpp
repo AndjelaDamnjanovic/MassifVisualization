@@ -303,16 +303,19 @@ void Parser::parseSnapshots(std::ifstream &file)
         }else if(snapshotType.compare("detailed") == 0){
             std::cout<<"Detailed"<<std::endl;
             snap->setSnapshotType((SnapshotType::DETAILED));
-            parseDetailedShapshot(file);
+            HeapTreeNode* htNode = parseDetailedShapshot(file);
+            snap->setCallTree(htNode);
         }else if(snapshotType.compare("peak") == 0){
             std::cout<<"Peak"<<std::endl;
             snap->setSnapshotType((SnapshotType::PEAK));
 
             HeapTreeNode* htNode = parseDetailedShapshot(file);
+            snap->setCallTree(htNode);
         }else{
             break;
         }
         //break;
+        m_snapshots.append(snap);
     }
 }
 
@@ -534,6 +537,12 @@ HeapTreeNode* Parser::parseDetailedShapshot(std::ifstream &file)
         currNode->setLineNum(&numLine);
         std::cout<<currNode->getLineNum()<<std::endl;
 
+        std::getline(file, line);
+        if(posN ==1)
+            ht->addChild(currNode);
+    }
+
+    if(line.find("threshold") != std::string::npos && !file.eof()){
         std::getline(file, line);
     }
 
