@@ -91,6 +91,30 @@ void GraphWindow::on_openOne_triggered(){
     }
 }
 
+void GraphWindow::lastHope(){
+
+    m_parsers.clear();
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), QString::fromStdString(m_path), "massif.out.*", nullptr, QFileDialog::DontUseNativeDialog);
+
+    QFile open(file);
+    if(open.size() == 0){
+        warning("This file is empty!");
+        return;
+    }
+
+    std::string filename = file.toStdString();
+    std::ifstream openFile;
+    m_path=filename;
+    openFile.open(filename);
+
+    if (openFile.fail()){
+        warning("Could not open a file!");
+        return;
+    }else{
+        drawGraph(filename);
+    }
+}
+
 void GraphWindow::on_openMultiple_triggered()
 {
     m_path = "";
@@ -146,8 +170,10 @@ void GraphWindow::on_pbOpenExec_clicked()
     process->start(command);
 
     QString massifOutput= workingDirectory + "massif.out." + QString::number(process->processId());
-    std::cout<<massifOutput.toStdString()<<std::endl;
-    drawGraph(massifOutput.toStdString());
+
+    //KAKO OTVORITI FAJL?
+    m_path = massifOutput.toStdString();
+    lastHope();
 }
 
 void GraphWindow::on_actionSaveAsPng2_triggered() {
@@ -196,6 +222,7 @@ void GraphWindow::on_pbSave_clicked() {
 
 void GraphWindow::drawGraph(std::string filename)
 {
+    std::cout<<"Ja poku[avam ] da otvorim "<<filename<<std::endl;
     Parser* parser = new Parser(filename);
     parser->parseFile();
 

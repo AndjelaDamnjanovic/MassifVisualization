@@ -39,6 +39,7 @@ public:
     bool cbThresholdChecked() const;
     QString rbTimeUnitChecked() const;
     QString getCommand() const;
+    void lastHope();
 
 signals:
 
