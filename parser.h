@@ -22,6 +22,7 @@ public:
     QVector<std::string> getMassifArgs() const;
     std::string getCommand() const;
     std::string getTimeUnit() const;
+    std::string getFilename() const;
 
     bool isValidMassifFile() const;
     void parseFile();

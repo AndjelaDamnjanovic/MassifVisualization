@@ -169,6 +169,57 @@ void GraphWindow::makePieCharts(const Parser *parser)
     }
 }
 
+void GraphWindow::drawMultiplePieCharts()
+{
+    qreal percentage;
+    std::string function;
+
+    QWidget *widgets = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout(widgets);
+
+    QScrollArea* scroll = ui->scroll;
+    scroll->setGeometry(ui->tabLeft->rect());
+    for(auto parser : m_parsers){
+        QVector<Snapshot*> snaps = parser->getSnapshots();
+        for(auto snap : snaps){
+            if(snap->getSnapshotType() == SnapshotType::PEAK){
+                std::cout<<"Da probam nesto!"<<std::endl;
+                HeapTreeNode* ht = snap->getCallTree();
+                std::string title ="Peak for massif file:" + parser->getFilename();
+                //title += std::to_string(snap->getSnapshotIndex());
+
+                quint64 totalAlloc = ht->getAllocatedBytes();
+
+                QVector<HeapTreeNode*> children = ht->getChildren();
+                if(children.size() != 0){
+                    QPieSeries *series = new QPieSeries();
+                    for(auto child : children){
+                        quint64 childAlloc = child->getAllocatedBytes();
+                        percentage = static_cast<qreal>(childAlloc) / static_cast<qreal>(totalAlloc);;
+                        function = child->getFunctionName();
+                        series->append(QString::fromStdString(function), percentage*100);
+                    }
+
+                    QChart *chart = new QChart();
+                    chart->addSeries(series);
+                    chart->legend()->setVisible(true);
+                    chart->legend()->setAlignment(Qt::AlignRight);
+                    chart->setMargins(QMargins(10, 10, 10, 10));
+                    QString chartTitle = QString::fromStdString(title);
+                    chart->setTitle(chartTitle);
+                    chart->legend()->setMinimumHeight(100);
+                    QChartView *chartView = new QChartView(chart);
+                    chartView->setRenderHint(QPainter::Antialiasing);
+                    layout->addWidget(chartView);
+                }
+                widgets->setLayout(layout);
+                scroll->setWidget(widgets);
+                scroll->setWidgetResizable(true);
+            }
+        }
+    }
+}
+
 void GraphWindow::on_openMultiple_triggered()
 {
     m_path = "";
@@ -444,6 +495,8 @@ void GraphWindow::drawMultipleGraphChart()
         drawMultipleNormalGraph();
     else
         drawMultipleScatterPlot();
+
+    drawMultiplePieCharts();
 }
 
 void GraphWindow::drawMultipleNormalGraph()

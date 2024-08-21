@@ -50,6 +50,11 @@ std::string Parser::getTimeUnit() const
     return m_timeUnit;
 }
 
+std::string Parser::getFilename() const
+{
+    return m_filename;
+}
+
 bool Parser::isValidMassifFile() const
 {
     return m_isMassifFile;

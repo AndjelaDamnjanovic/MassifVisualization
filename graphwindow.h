@@ -41,6 +41,7 @@ public:
     QString getCommand() const;
     void lastHope();
     void makePieCharts(const Parser *);
+    void drawMultiplePieCharts();
 signals:
 
 

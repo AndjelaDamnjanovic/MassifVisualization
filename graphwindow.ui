@@ -93,7 +93,7 @@ background-color:  #171717;</string>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="configTab">
      <property name="styleSheet">
@@ -555,26 +555,28 @@ background-color:  #171717;</string>
      <attribute name="title">
       <string>Pie charts</string>
      </attribute>
-     <widget class="QListWidget" name="lwPies">
+     <widget class="QScrollArea" name="scroll">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>341</width>
-        <height>381</height>
+        <x>110</x>
+        <y>9</y>
+        <width>231</width>
+        <height>371</height>
        </rect>
       </property>
-     </widget>
-     <widget class="QWidget" name="verticalLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>0</y>
-        <width>331</width>
-        <height>391</height>
-       </rect>
+      <property name="widgetResizable">
+       <bool>true</bool>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout"/>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>229</width>
+         <height>369</height>
+        </rect>
+       </property>
+      </widget>
      </widget>
     </widget>
    </widget>
