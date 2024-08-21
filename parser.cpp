@@ -64,10 +64,7 @@ void Parser::parseFile()
 {
     m_snapshots.clear();
     std::ifstream inputFile(m_filename);
-    if(inputFile.is_open())
-        std::cout<<"Open"<<std::endl;
-    else
-        std::cout<<"NOT open"<<std::endl;
+
     parsePreamble(inputFile);
 
     if (!m_isMassifFile) {
@@ -94,11 +91,6 @@ QVector<quint64> Parser::getTimesI() const
 
 void Parser::parsePreamble(std::ifstream &file)
 {
-    if(file.is_open())
-        std::cout<<"Open"<<std::endl;
-    else
-        std::cout<<"NOT open"<<std::endl;
-
     std::string line;
 
     std::getline(file, line);
@@ -135,22 +127,12 @@ void Parser::parseDescription(const std::string &line)
         return;
     }
 
-    // za slucaj da nije bilo dodatnih argumenata
-    std::string s("desc: (none)");
-    if(line.compare(s) == 0){
-        std::cout<<"Ovde sam!"<<std::endl;
-        m_massifArgs.append("(none)");
-        return;
-    }
-
     //deli se linija po -- karakterima koji odvajaju komande
     QVector<uint> positions;
     std::string delimiter = "--";
     uint position = line.find(delimiter, 0);
-    //positions.append(position);
 
     while(position < line.size()){
-        //std::cout<<position<<std::endl;
         positions.append(position);
         position = line.find(delimiter, position+1);
     }
@@ -161,13 +143,11 @@ void Parser::parseDescription(const std::string &line)
     }
 
     int i;
-    //std::cout<<positions.size();
+
     for (i = 0; i < positions.size() - 1; i++){
         m_massifArgs.append(line.substr(positions[i], positions[i+1]-positions[i]));
-        //std::cout<<line.substr(positions[i], positions[i+1]-positions[i])<<std::endl;
     }
     m_massifArgs.append(line.substr(positions[i], line.size() - positions[i]));
-    //std::cout<<line.substr(positions[i], line.size() - positions[i])<<std::endl;
 }
 
 void Parser::parseCommand(const std::string &line)
@@ -186,7 +166,6 @@ void Parser::parseCommand(const std::string &line)
     }
 
     m_command = trim(line.substr(position, line.size() - position));
-    //std::cout<<m_command<<std::endl;
 }
 
 void Parser::parseTimeUnit(const std::string &line)
@@ -205,14 +184,12 @@ void Parser::parseTimeUnit(const std::string &line)
     }
 
     std::string unit = trim(line.substr(position, line.size() - position));
-    //std::cout<<unit<<std::endl;
     if(unit.compare("B") == 0 || unit.compare("i") == 0 or unit.compare("ms") == 0){
         m_timeUnit = unit;
     }else{
         m_isMassifFile = false;
         return;
     }
-    //std::cout<<m_timeUnit<<std::endl;
 }
 
 void Parser::parseSnapshots(std::ifstream &file)
@@ -232,7 +209,6 @@ void Parser::parseSnapshots(std::ifstream &file)
 
         if(num != INT_MAX){
             snap->setSnapshotIndex(&num);
-            std::cout<<snap->getSnapshotIndex()<<std::endl;
         }else
             break;
 
@@ -249,7 +225,6 @@ void Parser::parseSnapshots(std::ifstream &file)
         parseSnapshotTime(line, &time);
         if(time != INT_MAX){
             snap->setTime(&time);
-            std::cout<<snap->getTime()<<std::endl;
         }else
             break;
 
@@ -259,7 +234,6 @@ void Parser::parseSnapshots(std::ifstream &file)
         parseSnapshotUsefulB(line, &usefulB);
         if(usefulB != INT_MAX){
             snap->setUsefulHeapB(&usefulB);
-            std::cout<<snap->getUsefulHeapB()<<std::endl;
         }else
             break;
 
@@ -269,13 +243,11 @@ void Parser::parseSnapshots(std::ifstream &file)
         parseSnapshotExtraB(line, &extraB);
         if(extraB != INT_MAX){
             snap->setExtraHeapB(&extraB);
-            std::cout<<snap->getExtraHeapB()<<std::endl;
         }else
             break;
 
         quint64 totalB = extraB + usefulB;
         snap->setTotalHeapB(&totalB);
-        std::cout<<snap->getTotalHeapB()<<std::endl;
 
         std::getline(file, line);
         quint64 stacks;
@@ -283,7 +255,6 @@ void Parser::parseSnapshots(std::ifstream &file)
         parseSnapshotStacks(line, &stacks);
         if(stacks != INT_MAX){
             snap->setStacks(&stacks);
-            std::cout<<snap->getStacks()<<std::endl;
         }else
             break;
         m_totalB.append(totalB + stacks);
@@ -293,12 +264,10 @@ void Parser::parseSnapshots(std::ifstream &file)
 
         parseSnapshotType(line, &snapshotType);
         if(snapshotType == ""){
-            //snap->setSnapshotType(&snapshotType);
             break;
         }
 
         if(snapshotType.compare("empty") == 0){
-            std::cout<<"Empty"<<std::endl;
             snap->setSnapshotType((SnapshotType::EMPTY));
             std::getline(file, line);
             if ((line.rfind("#-----------", 0) != 0) && !file.eof()) {
@@ -306,12 +275,10 @@ void Parser::parseSnapshots(std::ifstream &file)
                 return;
             }
         }else if(snapshotType.compare("detailed") == 0){
-            std::cout<<"Detailed"<<std::endl;
             snap->setSnapshotType((SnapshotType::DETAILED));
             HeapTreeNode* htNode = parseDetailedShapshot(file);
             snap->setCallTree(htNode);
         }else if(snapshotType.compare("peak") == 0){
-            std::cout<<"Peak"<<std::endl;
             snap->setSnapshotType((SnapshotType::PEAK));
 
             HeapTreeNode* htNode = parseDetailedShapshot(file);
@@ -319,7 +286,6 @@ void Parser::parseSnapshots(std::ifstream &file)
         }else{
             break;
         }
-        //break;
         m_snapshots.append(snap);
     }
 }
@@ -340,12 +306,9 @@ void Parser::parseSnapshotNumber(const std::string &line, uint *number){
     }
 
     std::string index = trim(line.substr(position + 1, line.size() - position));
-    //std::cout<<index<<std::endl;
     QString res = QString::fromStdString(index);
     uint num = res.toUInt();
     *number = num;
-    //std::cout<<num<<std::endl;
-    //std::cout<<snap->getSnapshotIndex()<<std::endl;
 }
 
 void Parser::parseSnapshotTime(const std::string &line, quint64 *time)
@@ -368,7 +331,6 @@ void Parser::parseSnapshotTime(const std::string &line, quint64 *time)
     QString res = QString::fromStdString(timeVal);
     quint64 num = res.toULongLong();
     *time = num;
-    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotUsefulB(const std::string &line, quint64 *useful)
@@ -391,7 +353,6 @@ void Parser::parseSnapshotUsefulB(const std::string &line, quint64 *useful)
     QString res = QString::fromStdString(memB);
     quint64 num = res.toULongLong();
     *useful = num;
-    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotExtraB(const std::string &line, quint64 *extra)
@@ -414,7 +375,6 @@ void Parser::parseSnapshotExtraB(const std::string &line, quint64 *extra)
     QString res = QString::fromStdString(memB);
     quint64 num = res.toULongLong();
     *extra = num;
-    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotStacks(const std::string &line, quint64 *stacks)
@@ -437,7 +397,6 @@ void Parser::parseSnapshotStacks(const std::string &line, quint64 *stacks)
     QString res = QString::fromStdString(memB);
     quint64 num = res.toULongLong();
     *stacks = num;
-    //std::cout<<num<<std::endl;
 }
 
 void Parser::parseSnapshotType(const std::string &line, std::string *type)
@@ -457,24 +416,20 @@ void Parser::parseSnapshotType(const std::string &line, std::string *type)
 
     std::string res = trim(line.substr(position + 1, line.size() - position));
     *type = res;
-    //std::cout<<res<<std::endl;
 }
 
 HeapTreeNode* Parser::parseDetailedShapshot(std::ifstream &file)
 {
-    //std::cout<<"Sve ok!"<<std::endl;
     HeapTreeNode* ht = new HeapTreeNode;
     std::string line;
 
     std::getline(file, line);
-    //std::cout<<line<<std::endl;
     uint posN = line.find("n");
     uint posDot = line.find(":");
 
     std::string childrenNum =line.substr(posN + 1, posDot - posN - 1);
     uint numChildren = QString::fromStdString(childrenNum).toUInt();
     ht->setNumOfChildern(&numChildren);
-    std::cout<<ht->getNumOfChildren()<<std::endl;
 
     std::regex regexp(" [1-9][0-9]+ ");
     std::smatch m;
@@ -483,14 +438,11 @@ HeapTreeNode* Parser::parseDetailedShapshot(std::ifstream &file)
     std::string bytesAllocated = trim(m.str(0));
     quint64 resBytes = QString::fromStdString(bytesAllocated).toULongLong();
     ht->setAllocatedBytes(&resBytes);
-    //std::cout<<ht->getAllocatedBytes()<<std::endl;
 
     HeapTreeNode* parent = ht;
     std::getline(file, line);
-    //std::cout<<line<<std::endl;
 
     while(line.find("threshold") == std::string::npos && line.find("#-----------") == std::string::npos){
-        //std::cout<<line<<std::endl;
 
         HeapTreeNode *currNode = new HeapTreeNode;
         posN = line.find("n");
@@ -500,47 +452,36 @@ HeapTreeNode* Parser::parseDetailedShapshot(std::ifstream &file)
         numChildren = QString::fromStdString(childrenNum).toUInt();
         currNode->setNumOfChildern(&numChildren);
         currNode->setParent(parent);
-        std::cout<<"Num of children: ";
-        std::cout<<currNode->getNumOfChildren()<<std::endl;
 
         std::regex_search(line, m, regexp);
         bytesAllocated = trim(m.str(0));
         resBytes = QString::fromStdString(bytesAllocated).toULongLong();
         currNode->setAllocatedBytes(&resBytes);
-        std::cout<<"Allocated bytes: ";
-        std::cout<<currNode->getAllocatedBytes()<<std::endl;
 
         std::regex regexp("0x[0-9A-F]{6}");
         std::regex_search(line, m, regexp);
         std::string hexadecimal = trim(m.str(0));
         currNode->setAddress(&hexadecimal);
 
-        std::cout<<currNode->getAddress()<<std::endl;
-
         std::regex regexp2(": [a-zA-Z_]+ ");
         std::regex_search(line, m, regexp2);
         std::string fion = trim(m.str(0).erase(0, 1));
         currNode->setFunctionName(&fion);
 
-        std::cout<<currNode->getFunctionName()<<std::endl;
-
         std::regex regexp3("\\([a-zA-Z0-9\.:]+\\)");
         std::regex_search(line, m, regexp3);
         std::string res = trim(m.str(0).erase(0, 1));
         std::string final = trim(res.erase(res.size() - 1, 1));
-        //currNode->setFunctionName(&res);
 
 
         std::string delimiter = ":";
         uint position = final.find(delimiter, 0);
         std::string filename = final.substr(0, position);
         currNode->setFileName(&filename);
-        std::cout<<currNode->getFileName()<<std::endl;
 
         std::string lineNum = final.substr(position + 1, final.size() - position);
         uint numLine = QString::fromStdString(lineNum).toUInt();
         currNode->setLineNum(&numLine);
-        std::cout<<currNode->getLineNum()<<std::endl;
 
         std::getline(file, line);
         if(posN ==1)

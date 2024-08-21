@@ -11,7 +11,6 @@
 class Parser
 {
 public:
-    // razmisli kad zavrsis sa implementacijom moze li ovde *
     Parser(std::string);
     ~Parser();
 
@@ -49,9 +48,6 @@ private:
     quint64 m_memHeapB;
     quint64 m_memHeapExtraB;
     quint64 m_stacks;
-    //memHeapB/(memHeapB + memExtraB + stacks)
-    //qreal m_precentage;
-
 
     void parsePreamble(std::ifstream &);
     void parseDescription(const std::string &);

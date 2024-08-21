@@ -121,8 +121,6 @@ void GraphWindow::lastHope(){
 
 void GraphWindow::makePieCharts(const Parser *parser)
 {
-    std::cout<<"Proba"<<std::endl;
-
     qreal percentage;
     std::string function;
 
@@ -183,10 +181,8 @@ void GraphWindow::drawMultiplePieCharts()
         QVector<Snapshot*> snaps = parser->getSnapshots();
         for(auto snap : snaps){
             if(snap->getSnapshotType() == SnapshotType::PEAK){
-                std::cout<<"Da probam nesto!"<<std::endl;
                 HeapTreeNode* ht = snap->getCallTree();
                 std::string title ="Peak for massif file:" + parser->getFilename();
-                //title += std::to_string(snap->getSnapshotIndex());
 
                 quint64 totalAlloc = ht->getAllocatedBytes();
 
@@ -231,7 +227,6 @@ void GraphWindow::on_openMultiple_triggered()
     }
 
     for(auto file : files){
-        std::cout<<file.toStdString()<<std::endl;
         QFile open(file);
         if(open.size() == 0){
             warning("File " + file + " is empty!");
@@ -276,7 +271,10 @@ void GraphWindow::on_pbOpenExec_clicked()
 
     QString massifOutput= workingDirectory + "massif.out." + QString::number(process->processId());
 
-    //KAKO OTVORITI FAJL?
+    if (!process->exitStatus() == QProcess::NormalExit || !(process->exitCode() == 0)){
+        warning("Process failed!");
+        return;
+    }
     m_path = massifOutput.toStdString();
     lastHope();
 }
@@ -327,7 +325,6 @@ void GraphWindow::on_pbSave_clicked() {
 
 void GraphWindow::drawGraph(std::string filename)
 {
-    std::cout<<"Ja poku[avam ] da otvorim "<<filename<<std::endl;
     Parser* parser = new Parser(filename);
     parser->parseFile();
 
@@ -560,7 +557,6 @@ void GraphWindow::drawMultipleNormalGraph()
 
 void GraphWindow::drawMultipleScatterPlot()
 {
-    std::cout<<"Ovde i treba da budem"<<std::endl;
     QChart *chart = new QChart();
     chart->setTitle("Comparison of multiple massif files:");
 
@@ -641,11 +637,6 @@ bool GraphWindow::cbMaxSnapshots() const
     return ui->cbMaxSnaps->isChecked();
 }
 
-bool GraphWindow::cbThresholdChecked() const
-{
-    return ui->cbThreshold->isChecked();
-}
-
 QString GraphWindow::rbTimeUnitChecked() const
 {
     if(ui->rbB->isChecked())
@@ -672,15 +663,10 @@ QString GraphWindow::getCommand() const
         res = res + " " + ui->cbMaxSnaps->text() + ui->spinSnapshots->text();
     }
 
-    if(cbThresholdChecked()){
-        res = res + " " + ui->cbThreshold->text() + ui->spinThreshold->text();
-    }
-
     res += " --time-unit=";
     res += rbTimeUnitChecked();
 
     res = res + " " + ui->leExe->text();
-    std::cout<<res.toStdString()<<std::endl;
     return res;
 }
 

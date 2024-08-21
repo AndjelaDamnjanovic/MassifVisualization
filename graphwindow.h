@@ -36,7 +36,6 @@ public:
     bool cbStacksChecked() const;
     bool cbFreqChecked() const;
     bool cbMaxSnapshots() const;
-    bool cbThresholdChecked() const;
     QString rbTimeUnitChecked() const;
     QString getCommand() const;
     void lastHope();
