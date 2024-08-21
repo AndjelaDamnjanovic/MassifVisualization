@@ -127,33 +127,45 @@ void GraphWindow::makePieCharts(const Parser *parser)
     std::string function;
 
     QVector<Snapshot*> snaps = parser->getSnapshots();
-    QListWidget *lw = ui->lwPies;
-    QVBoxLayout *layout = ui->verticalLayout;
+    QWidget *widgets = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout(widgets);
+
+    QScrollArea* scroll = ui->scroll;
+    scroll->setGeometry(ui->tabLeft->rect());
     for(auto snap : snaps){
         if(snap->getSnapshotType() != SnapshotType::EMPTY){
             HeapTreeNode* ht = snap->getCallTree();
+            std::string title = "Snapshot number: ";
+            title += std::to_string(snap->getSnapshotIndex());
+
             quint64 totalAlloc = ht->getAllocatedBytes();
 
             QVector<HeapTreeNode*> children = ht->getChildren();
-            QPieSeries *series = new QPieSeries();
-            for(auto child : children){
-                quint64 childAlloc = child->getAllocatedBytes();
-                percentage = static_cast<qreal>(childAlloc) / static_cast<qreal>(totalAlloc);;
-                function = child->getFunctionName();
-                series->append(QString::fromStdString(function), percentage*100);
-            }
+            if(children.size() != 0){
+                QPieSeries *series = new QPieSeries();
+                for(auto child : children){
+                    quint64 childAlloc = child->getAllocatedBytes();
+                    percentage = static_cast<qreal>(childAlloc) / static_cast<qreal>(totalAlloc);;
+                    function = child->getFunctionName();
+                    series->append(QString::fromStdString(function), percentage*100);
+                }
 
-            QChart *chart = new QChart();
-            chart->addSeries(series);
-            chart->legend()->setVisible(true);
-            chart->legend()->setAlignment(Qt::AlignRight);
-            chart->setMargins(QMargins(10, 10, 10, 10));
-            QChartView *chartView = new QChartView(chart);
-            chartView->setRenderHint(QPainter::Antialiasing);
-            //chartView->setMinimumHeight(300);
-            layout->addWidget(chartView);
+                QChart *chart = new QChart();
+                chart->addSeries(series);
+                chart->legend()->setVisible(true);
+                chart->legend()->setAlignment(Qt::AlignRight);
+                chart->setMargins(QMargins(10, 10, 10, 10));
+                QString chartTitle = QString::fromStdString(title);
+                chart->setTitle(chartTitle);
+                chart->legend()->setMinimumHeight(100);
+                QChartView *chartView = new QChartView(chart);
+                chartView->setRenderHint(QPainter::Antialiasing);
+                layout->addWidget(chartView);
+            }
+            widgets->setLayout(layout);
+            scroll->setWidget(widgets);
+            scroll->setWidgetResizable(true);
         }
-        //lw->setLayout(layout);
     }
 }
 
