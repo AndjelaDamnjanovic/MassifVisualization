@@ -26,6 +26,7 @@
 #include <QChart>
 #include <QChartView>
 #include <QVBoxLayout>
+#include <QProcess>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -125,6 +126,28 @@ void GraphWindow::on_openMultiple_triggered()
 
     m_parsers = parsers;
     drawMultipleGraphChart();
+}
+
+void GraphWindow::on_pbOpenExec_clicked()
+{
+    QProcess* process = new QProcess();
+    QString pathToExe = ui->leExe->text();
+
+    if(pathToExe == ""){
+        warning("Path is empty! You cannot leave this field empty!");
+        return;
+    }
+
+    QString command = getCommand();
+
+    QString workingDirectory = pathToExe.mid(0, pathToExe.lastIndexOf("/") + 1);
+    process->setWorkingDirectory(workingDirectory);
+
+    process->start(command);
+
+    QString massifOutput= workingDirectory + "massif.out." + QString::number(process->processId());
+    std::cout<<massifOutput.toStdString()<<std::endl;
+    drawGraph(massifOutput.toStdString());
 }
 
 void GraphWindow::on_actionSaveAsPng2_triggered() {
@@ -465,6 +488,64 @@ void GraphWindow::drawMultipleScatterPlot()
 void GraphWindow::updateMultipleGraphs()
 {
     drawMultipleGraphChart();
+}
+
+bool GraphWindow::cbStacksChecked() const
+{
+    return ui->cbStacks->isChecked();
+}
+
+bool GraphWindow::cbFreqChecked() const
+{
+    return ui->cbDetailedFreq->isChecked();
+}
+
+bool GraphWindow::cbMaxSnapshots() const
+{
+    return ui->cbMaxSnaps->isChecked();
+}
+
+bool GraphWindow::cbThresholdChecked() const
+{
+    return ui->cbThreshold->isChecked();
+}
+
+QString GraphWindow::rbTimeUnitChecked() const
+{
+    if(ui->rbB->isChecked())
+        return "B";
+    else if(ui->rbI->isChecked())
+        return "i";
+    else
+        return "ms";
+}
+
+QString GraphWindow::getCommand() const
+{
+    QString res = "valgrind --tool=massif";
+
+    if(cbStacksChecked()){
+        res = res + " " + ui->cbStacks->text();
+    }
+
+    if(cbFreqChecked()){
+        res = res + " " + ui->cbDetailedFreq->text() + ui->spinFreq->text();
+    }
+
+    if(cbMaxSnapshots()){
+        res = res + " " + ui->cbMaxSnaps->text() + ui->spinSnapshots->text();
+    }
+
+    if(cbThresholdChecked()){
+        res = res + " " + ui->cbThreshold->text() + ui->spinThreshold->text();
+    }
+
+    res += " --time-unit=";
+    res += rbTimeUnitChecked();
+
+    res = res + " " + ui->leExe->text();
+    std::cout<<res.toStdString()<<std::endl;
+    return res;
 }
 
 void GraphWindow::on_actionClose_triggered() {

@@ -93,7 +93,7 @@ background-color:  #171717;</string>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="configTab">
      <property name="styleSheet">
@@ -343,21 +343,211 @@ background-color:  #171717;</string>
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="drawTab">
+    <widget class="QWidget" name="execTab">
      <attribute name="title">
-      <string>Pie charts</string>
+      <string>Exec options</string>
      </attribute>
-     <widget class="QListWidget" name="lwPie">
+     <widget class="QCheckBox" name="cbStacks">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>231</width>
-        <height>411</height>
+        <y>10</y>
+        <width>111</width>
+        <height>23</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">background color: white</string>
+      <property name="text">
+       <string> --stacks=yes</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbDetailedFreq">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>40</y>
+        <width>131</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>--detailed-freq=</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinFreq">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>40</y>
+        <width>51</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbMaxSnaps">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>70</y>
+        <width>141</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>--max-snapshots=</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinSnapshots">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>70</y>
+        <width>51</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>200</number>
+      </property>
+      <property name="singleStep">
+       <number>10</number>
+      </property>
+      <property name="value">
+       <number>100</number>
+      </property>
+      <property name="displayIntegerBase">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbThreshold">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>100</y>
+        <width>131</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>--threshold=</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="spinThreshold">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>100</y>
+        <width>51</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="decimals">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <double>10.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.100000000000000</double>
+      </property>
+      <property name="stepType">
+       <enum>QAbstractSpinBox::DefaultStepType</enum>
+      </property>
+      <property name="value">
+       <double>1.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblTimeUnit">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>140</y>
+        <width>91</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>--time-unit=</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbI">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>160</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>i</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbB">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>190</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>B</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbMs">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>220</y>
+        <width>112</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ms</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblPath">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>260</y>
+        <width>111</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Path to exe file:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="leExe">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>250</y>
+        <width>113</width>
+        <height>25</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbOpenExec">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>290</y>
+        <width>231</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Open executable</string>
       </property>
      </widget>
     </widget>
@@ -382,7 +572,6 @@ background-color:  #171717;</string>
      </property>
      <addaction name="openOne"/>
      <addaction name="openMultiple"/>
-     <addaction name="openExec"/>
     </widget>
     <addaction name="menuOpen"/>
     <addaction name="separator"/>

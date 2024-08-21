@@ -33,6 +33,12 @@ public:
     void drawMultipleNormalGraph();
     void drawMultipleScatterPlot();
     void updateMultipleGraphs();
+    bool cbStacksChecked() const;
+    bool cbFreqChecked() const;
+    bool cbMaxSnapshots() const;
+    bool cbThresholdChecked() const;
+    QString rbTimeUnitChecked() const;
+    QString getCommand() const;
 
 signals:
 
@@ -50,6 +56,7 @@ private slots:
     void on_actionClose2_triggered();
     void on_actionSave2_triggered();
     void on_pbSave_clicked();
+    void on_pbOpenExec_clicked();
 
 private:
     Ui::GraphWindow* ui;
