@@ -75,6 +75,11 @@ void GraphWindow::on_openOne_triggered(){
     m_parsers.clear();
     QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "/home/pc/Desktop", "massif.out.*", nullptr, QFileDialog::DontUseNativeDialog);
 
+    if(file.size() == 0){
+        warning("You did not choose a file!");
+        return;
+    }
+
     QFile open(file);
     if(open.size() == 0){
         warning("This file is empty!");
@@ -223,6 +228,12 @@ void GraphWindow::on_openMultiple_triggered()
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Files"), "/home/pc/Desktop", "massif.out.*");
 
     if(files.size() == 0){
+        warning("You did not choose a file!");
+        return;
+    }
+
+    if(file.size() > 0){
+        warning("The maximum number of files to be chosen is 9!");
         return;
     }
 
