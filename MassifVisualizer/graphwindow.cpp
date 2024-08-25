@@ -232,7 +232,7 @@ void GraphWindow::on_openMultiple_triggered()
         return;
     }
 
-    if(file.size() > 0){
+    if(files.size() > 0){
         warning("The maximum number of files to be chosen is 9!");
         return;
     }
@@ -707,8 +707,8 @@ void GraphWindow::on_actionClose_triggered() {
 }
 
 void GraphWindow::on_actionSave_triggered(){
-    if (m_path==""){
-        if (this->isLeftToRight()){
+    if (m_write_path==""){
+        if (!ui->graphicsView->isLeftToRight()){
             QMessageBox::information(this, tr("Error"), "The scene is empty");
         }else{
             QString file = QFileDialog::getSaveFileName(this, tr("Save File"), "/home/", "MASSIF files (*.massif)", nullptr, QFileDialog::DontUseNativeDialog);
@@ -717,14 +717,30 @@ void GraphWindow::on_actionSave_triggered(){
                 if (filename.substr(filename.size()- 7).compare(".massif")!=0){
                     filename+=".massif";
                 }
-                m_path = filename;
+                m_write_path = filename;
                 std::ofstream saveFile;
                 saveFile.open(filename);
+                QString text = "Background color: " + ui->comboBackground->currentText() + "\n";
+                text.append("Graph color: " + ui->comboGraph->currentText() + "\n");
+                text.append("Line width: " + ui->spinWidth->text() + "\n");
+                text.append("Graph type: ");
+                text.append(ui->rbScatter->isChecked() ? "scatter plot\n" : "normal graph\n");
+                text.append("X-axis: ");
+                text.append(ui->cbXaxis->isChecked() ? "time unit\n" : "snapshot number\n");
+                saveFile<<text.toStdString();
             }
         }
     }else{
         std::ofstream saveFile;
         saveFile.open(m_path);
+        QString text = "Background color: " + ui->comboBackground->currentText() + "\n";
+        text.append("Graph color: " + ui->comboGraph->currentText() + "\n");
+        text.append("Line width: " + ui->spinWidth->text() + "\n");
+        text.append("Graph type: ");
+        text.append(ui->rbScatter->isChecked() ? "scatter plot\n" : "normal graph\n");
+        text.append("X-axis: ");
+        text.append(ui->cbXaxis->isChecked() ? "time unit\n" : "snapshot number\n");
+        saveFile<<text.toStdString();
     }
 }
 

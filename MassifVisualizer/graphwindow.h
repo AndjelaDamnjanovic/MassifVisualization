@@ -62,6 +62,7 @@ private slots:
 private:
     Ui::GraphWindow* ui;
     std::string m_path = "";
+    std::string m_write_path = "";
     bool m_normalGraphChecked = true;
     bool m_scatterPlotChecked = false;
     bool m_timeUnit = false;
