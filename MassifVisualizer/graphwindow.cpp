@@ -232,7 +232,7 @@ void GraphWindow::on_openMultiple_triggered()
         return;
     }
 
-    if(files.size() > 0){
+    if(files.size() > 9){
         warning("The maximum number of files to be chosen is 9!");
         return;
     }
